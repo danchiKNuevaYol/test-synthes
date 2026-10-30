@@ -296,7 +296,7 @@ function sketch(store, live, bridge) {
     // --- марево над горизонтом: полоски холста смещаются волной
     function drawHeat(amount, hy) {
       if (amount < 0.02) return;
-      vGradient(hy - 0.16 * H, 0.32 * H, [[0, ORANGE, 0], [0.5, ORANGE, 0.12 * amount], [1, ORANGE, 0]]);
+      vGradient(hy - 0.16 * H, 0.32 * H, [[0, ORANGE, 0], [0.5, ORANGE, 0.2 * amount], [1, ORANGE, 0]]);
       if (motion.matches) return;
       const cnv = ctx().canvas, d = p.pixelDensity(), ys = hy - 0.14 * H, ye = hy + 0.12 * H, sh = 3;
       for (let y = ys; y < ye; y += sh) {
@@ -371,8 +371,8 @@ function sketch(store, live, bridge) {
       p.push();
       glow(cx, cy, R * 2.6, lit, 0.1 + 0.1 * dens);              // общая дымка вокруг
       const pf = terrain.puffs;
-      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + 0.2) * R, f.r * R * 1.1, f.r * R * 0.9, shade, alpha * 0.6, 0.62);
-      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + Math.cos(clock * f.sp * 0.8 + f.ph) * 0.03 * still) * R, f.r * R, f.r * R * 0.85, lit, alpha, 0.62);
+      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + 0.2) * R, f.r * R * 1.1, f.r * R * 0.9, shade, alpha * 0.6, 0.7);
+      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + Math.cos(clock * f.sp * 0.8 + f.ph) * 0.03 * still) * R, f.r * R, f.r * R * 0.85, lit, alpha, 0.7);
       // порывы: клочья плывут вправо через облако, чем больше a.mod и громче A — тем быстрее и плотнее
       const speed = 0.02 + a.mod * 0.14 + lv.a * 0.1;
       for (const w of terrain.wisps) {
