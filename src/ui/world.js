@@ -121,14 +121,14 @@ function sketch(store, live, bridge) {
       p.pop();
     }
     // мягкое пятно (эллипс с затухающим краем); вызывать внутри push/pop
-    function blob(x, y, rx, ry, c, a) {
+    function blob(x, y, rx, ry, c, a, hard = 0.5) {
       const g = ctx();
       g.save();
       g.translate(x, y);
       g.scale(1, ry / rx);
       const gr = g.createRadialGradient(0, 0, 0, 0, 0, rx);
       gr.addColorStop(0, css(c, a));
-      gr.addColorStop(0.5, css(c, a * 0.55));
+      gr.addColorStop(hard, css(c, a * (1 - hard * 0.8)));
       gr.addColorStop(1, css(c, 0));
       g.fillStyle = gr;
       g.fillRect(-rx, -rx, rx * 2, rx * 2);
@@ -332,7 +332,7 @@ function sketch(store, live, bridge) {
     const sway = (x, ph, k) => (Math.sin(clock * 1.7 + x * 0.006 + ph) * 0.7 + Math.sin(clock * 3.3 + x * 0.013) * 0.3) * k;
 
     function drawBlades(groundCol, hy, windAmp, weather, share) {
-      const yG = GROUND_TOP * H, tint = clamp(lv.a * 0.9) * 0.4, hot = scaleC(ORANGE, 0.5);
+      const yG = GROUND_TOP * H, tint = clamp(lv.a * 0.9) * 0.3, hot = mixC(ORANGE, groundCol, 0.45);
       const list = terrain.blades, n = Math.round(list.length * share);
       p.noStroke();
       for (let i = 0; i < n; i++) {
@@ -341,7 +341,7 @@ function sketch(store, live, bridge) {
         const hgt = (0.018 + 0.06 * b.d) * H * b.h;              // ближе — выше
         const w = (1.4 + 3.4 * b.d) * b.w * U;
         const dark = 1 - 0.35 * b.d;                              // книзу темнее — низ спокойный
-        const c = mixC(scaleC(groundCol, b.shade * dark * 1.05), hot, tint * (0.3 + 0.7 * hgt / (0.08 * H)));
+        const c = mixC(scaleC(mixC(groundCol, [150, 160, 120], 0.22), b.shade * dark * 1.1), hot, tint * (0.3 + 0.7 * hgt / (0.08 * H)));
         const dxTip = b.lean * H + sway(x, b.ph, windAmp) * hgt * 0.9, dxMid = dxTip * 0.3;
         F(c);
         p.beginShape();
@@ -363,16 +363,16 @@ function sketch(store, live, bridge) {
     function drawCloud(sc, weather, a, cloudCol) {
       const pos = cloudPos(a), cx = pos.x * W, cy = pos.y * H;
       const dens = clamp(a.shape);
-      const R = Math.min(W * 0.06, H * 0.1) * (0.7 + 0.7 * dens) * (1 + 0.07 * lv.a);
-      const tint = clamp(lv.a * 0.6);
+      const R = Math.min(W * 0.065, H * 0.11) * (0.7 + 0.7 * dens) * (1 + 0.07 * lv.a);
+      const tint = clamp(lv.a * 0.5);
       const lit = mixC(cloudCol, ORANGE, tint * 0.6), shade = mixC(scaleC(cloudCol, 0.7), scaleC(ORANGE, 0.7), tint * 0.5);
       const alpha = 0.34 + 0.5 * dens;
       const still = motion.matches ? 0.3 : 1;
       p.push();
       glow(cx, cy, R * 2.6, lit, 0.1 + 0.1 * dens);              // общая дымка вокруг
       const pf = terrain.puffs;
-      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + 0.2) * R, f.r * R * 1.1, f.r * R * 0.9, shade, alpha * 0.55);
-      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + Math.cos(clock * f.sp * 0.8 + f.ph) * 0.03 * still) * R, f.r * R, f.r * R * 0.85, lit, alpha);
+      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + 0.2) * R, f.r * R * 1.1, f.r * R * 0.9, shade, alpha * 0.6, 0.62);
+      for (const f of pf) blob(cx + (f.ox + Math.sin(clock * f.sp + f.ph) * 0.06 * still) * R, cy + (f.oy + Math.cos(clock * f.sp * 0.8 + f.ph) * 0.03 * still) * R, f.r * R, f.r * R * 0.85, lit, alpha, 0.62);
       // порывы: клочья плывут вправо через облако, чем больше a.mod и громче A — тем быстрее и плотнее
       const speed = 0.02 + a.mod * 0.14 + lv.a * 0.1;
       for (const w of terrain.wisps) {
