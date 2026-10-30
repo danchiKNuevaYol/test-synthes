@@ -16,7 +16,7 @@
 .weather-kit__stage { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 0 10px; align-items: center; }
 .weather-kit__icon { position: relative; width: 26px; height: 26px; display: grid; place-items: center; color: var(--ink); border: 1px solid var(--ink); }
 .weather-kit__icon svg { width: 18px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
-.weather-kit__n { position: absolute; left: -1px; top: -9px; padding: 0 2px; background: var(--paper); font: 400 8px/1 var(--font-mono); font-style: normal; color: var(--ink); }
+.weather-kit__n { position: absolute; left: -10px; top: 50%; margin-top: -4px; font: 400 8px/1 var(--font-mono); font-style: normal; color: var(--ink-soft); }
 .weather-kit__arrow { width: 26px; height: 11px; display: grid; place-items: center; color: var(--ink-soft); }
 .weather-kit__arrow svg { width: 12px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
 .weather-kit .slider__track { margin-top: 0; height: 18px; }

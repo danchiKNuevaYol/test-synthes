@@ -13,7 +13,7 @@
 .trail__field { position: relative; display: grid; grid-template-rows: 14px repeat(4, 1fr); min-width: 0; }
 .trail__nums, .trail__row { display: grid; grid-template-columns: repeat(16, 1fr); }
 .trail__row { border-top: 1px solid var(--hair); }
-.trail__num { text-align: center; font: 400 9px/14px var(--font-mono); color: var(--ink-soft); }
+.trail__num { text-align: center; font: 400 8.5px/14px var(--font-mono); letter-spacing: -0.02em; color: var(--ink-soft); }
 .trail__num.is-beat { color: var(--ink); }
 .trail__num.is-now { background: var(--ink); color: var(--paper); font-weight: 500; }
 
