@@ -2,6 +2,7 @@
    в середине индикатор уровня рядом с фейдером, внизу знак и название канала. */
 .mixer__strips { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
 .mixer__strip { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; padding: 0 2px; }
+.mixer__strip > .slider { align-self: stretch; }
 .mixer__strip + .mixer__strip { border-left: 1px solid var(--hair); }
 .mixer__body { flex: 1; min-height: 0; display: flex; align-items: stretch; justify-content: center; gap: 2px; }
 .mixer__body .fader { height: 100%; }
