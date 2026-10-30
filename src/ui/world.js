@@ -62,9 +62,9 @@ function buildTerrain(p, seed, W, H) {
   const cols = Math.ceil(W / STEP) + 2;
   // дальняя, средняя, ближняя: число линий, отступ подножия от горизонта, размах, частота, острота (доли высоты)
   const spec = [
-    { n: 6, off: 0.075, amp: 0.2, freq: 2.4, sharp: 0.5, gap: 0.0062 },
-    { n: 8, off: 0.042, amp: 0.16, freq: 3.6, sharp: 0.4, gap: 0.0068 },
-    { n: 10, off: 0.014, amp: 0.125, freq: 5.4, sharp: 0.3, gap: 0.0072 },
+    { n: 6, off: 0.06, amp: 0.1, freq: 2.4, sharp: 0.5, gap: 0.0058 },
+    { n: 8, off: 0.034, amp: 0.08, freq: 3.6, sharp: 0.4, gap: 0.0062 },
+    { n: 10, off: 0.012, amp: 0.062, freq: 5.4, sharp: 0.3, gap: 0.0066 },
   ];
   const ridges = spec.map((L) => {
     const o = rnd() * 900, f = L.freq * (0.85 + rnd() * 0.4), amp = L.amp * (0.88 + rnd() * 0.3);
@@ -215,8 +215,18 @@ function sketch(store, live, bridge, el) {
       const { hy, hatch, state, minutes, weather } = S, g = ctx();
       const gap = hatch.gap * H, rowAlpha = hatch.alpha;
       const a = state.a, dens = clamp(a.shape);
-      const pos = cloudPos(a), cx = pos.x * W, cy = pos.y * H;
-      const R = Math.min(W * 0.07, H * 0.115) * (0.6 + 0.9 * dens) * (1 + 0.1 * lv.a);
+      const pos = cloudPos(a);
+      let cx = pos.x * W, cy = pos.y * H;
+      // Облако целиком в свободном небе: правее названия (HUD ≤ 42% ширины), ниже строки места (~0.2H),
+      // выше верхушек гряд в полосе облака. Размер и центр подгоняем под эти границы.
+      const EXT_X = 3.5, EXT_Y = 1.45;                        // вылет клубов и закрутки, в радиусах R
+      const R0 = Math.min(W * 0.04, H * 0.085) * (0.62 + 0.75 * dens) * (1 + 0.06 * lv.a);
+      let yTop = 0.2 * H, yBot = S.rTop - 6;
+      const ci0 = Math.max(0, Math.floor((cx - EXT_X * R0) / STEP)), ci1 = Math.min(terrain.cols - 1, Math.ceil((cx + EXT_X * R0) / STEP));
+      for (const rg of terrain.ridges) for (let i = ci0; i <= ci1; i++) yBot = Math.min(yBot, ridgeTopY(rg, hy, i) - 6);
+      const R = Math.max(6, Math.min(R0, (yBot - yTop) / (2 * EXT_Y)));
+      cy = Math.min(Math.max(cy, yTop + EXT_Y * R), yBot - EXT_Y * R);
+      cx = Math.min(Math.max(cx, 0.43 * W + EXT_X * R), 0.975 * W - EXT_X * R);
       const swirl = (0.9 + 1.5 * dens) * (1 + 0.16 * Math.sin(clock * (0.5 + a.mod * 1.6))) + lv.a * 0.4;
       const bulge = 0.12 + 0.2 * dens;
       // облако — вытянутая гряда из 3–5 клубов разного размера; соседние клубы закручены в разные стороны

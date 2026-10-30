@@ -7,7 +7,7 @@
 }
 .hud > * { margin: 0; }
 .hud__overline { font: 500 10px/1.5 var(--font-mono); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--ink-soft); max-width: 34em; }
-.hud__place { margin-top: 10px; font: 500 clamp(30px, 4.2vw, 64px)/1 var(--font-display); letter-spacing: -0.005em; overflow-wrap: anywhere; }
+.hud__place { margin-top: 10px; font: 500 clamp(28px, min(4.2vw, 8vh), 64px)/1 var(--font-display); letter-spacing: -0.005em; overflow-wrap: anywhere; }
 .hud__meta { margin-top: 12px; font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; white-space: nowrap; }
 .hud__hint {
   display: inline-block; margin-top: 14px; padding: 4px 8px; border: 1px solid var(--ink); background: var(--panel); text-shadow: none;

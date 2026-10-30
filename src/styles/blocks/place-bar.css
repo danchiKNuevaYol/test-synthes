@@ -1,12 +1,12 @@
 /* .place-bar — строка места справа сверху: поле с подчёркиванием, текстовые кнопки, места-пресеты (активное — инверсия).
-   Первая строка: поле, «НАСТРОИТЬ», «ССЫЛКА». Вторая: места-пресеты. */
+   Одна компактная строка (~36px), чтобы не занимать небо: поле · «НАСТРОИТЬ» · места · «ССЫЛКА». */
 .place-bar {
-  position: absolute; top: 18px; right: 2.5%; z-index: 6; width: 52%; max-width: 600px; margin: 0;
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 14px;
-  padding: 8px 14px 9px;
+  position: absolute; top: 12px; right: 2.5%; z-index: 6; width: 53%; max-width: 640px; margin: 0;
+  display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-end; gap: 6px 12px;
+  padding: 5px 12px 6px;
 }
 .place-bar__input {
-  order: 1; flex: 1 1 200px; min-width: 0; height: 26px; padding: 0 2px; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0;
+  order: 1; flex: 1 1 110px; min-width: 0; height: 24px; padding: 0 2px; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0;
   background: transparent; color: var(--ink); caret-color: var(--ink); outline: none;
   font: 500 12px var(--font-mono); letter-spacing: 0.02em; text-overflow: ellipsis;
 }
@@ -15,19 +15,20 @@
 .place-bar__input:focus-visible { outline: none; }
 
 .place-bar__go, .place-bar__link {
-  order: 1; height: 26px; padding: 0 2px; white-space: nowrap;
+  height: 24px; padding: 0 2px; white-space: nowrap;
   font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); color: var(--ink);
   border-bottom: 1px solid transparent;
 }
 .place-bar__go:hover, .place-bar__link:hover { border-bottom-color: var(--ink); }
 .place-bar__link.is-done { background: var(--ink); color: var(--paper); }
 
-/* первый разделитель — перенос строки, второй не нужен */
+/* одна строка: поле · НАСТРОИТЬ · места · ССЫЛКА; разделители не нужны */
+.place-bar__go { order: 2; }
+.place-bar__link { order: 4; }
 .place-bar__sep { display: none; }
-.place-bar__sep:first-of-type { display: block; order: 2; flex-basis: 100%; height: 0; margin: -4px 0 0; }
 
 .place-bar__chip {
-  order: 3; height: 22px; padding: 0 6px; white-space: nowrap;
+  order: 3; height: 22px; padding: 0 5px; white-space: nowrap;
   font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); color: var(--ink);
   border: 1px solid transparent;
 }
