@@ -13,7 +13,6 @@ import { mountSlider } from './ui/slider.js';
 import { mountFader } from './ui/fader.js';
 import { mountMeter } from './ui/meter.js';
 import { sign } from './ui/signs.js';
-import { mountWeatherKit } from './ui/weather-kit.js';
 import { mountTrail } from './ui/trail.js';
 import { mountRecorder } from './ui/recorder.js';
 import { degreeName } from './state/music.js';
@@ -30,12 +29,11 @@ const live = { state: store.get(), step: -1, playing: false, recording: false };
 const world = mountWorld($('.world'), store, live);
 const hud = mountHud($('.hud'));
 const placeBar = mountPlaceBar($('.place-bar'), store);
-const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });   // он сам подключает ползунок РАСКАЧКА
+const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });
 const waveSwitches = $$('.wave-switch[data-param]').map((el) => mountWaveSwitch(el, store));
-const sliders = $$('.slider').filter((el) => !el.closest('.weather-kit, .recorder')).map((el) => mountSlider(el, store));   // ползунки голосов и микшера
+const sliders = $$('.slider').filter((el) => !el.closest('.recorder')).map((el) => mountSlider(el, store));   // ползунки голосов и микшера
 const faders = $$('.fader').map((el) => mountFader(el, store));
 const meters = $$('[data-meter]').map((el) => ({ id: el.dataset.meter, update: mountMeter(el) }));
-const weatherKit = mountWeatherKit($('.weather-kit'), store);   
 const trail = mountTrail($('.trail'), store);
 // знаки каналов в заголовках модулей и подписях полос микшера (SVG, а не символы шрифта)
 $$('.instrument [data-sign]').forEach((el) => el.insertAdjacentHTML('afterbegin', sign(el.dataset.sign)));
@@ -62,7 +60,7 @@ function applyTheme(place) {
   Object.entries(vars).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
 }
 
-const views = [world, placeBar, ...waveSwitches, ...sliders, ...faders, weatherKit, trail.update];
+const views = [world, placeBar, ...waveSwitches, ...sliders, ...faders, trail.update];
 function render(state) {
   live.state = state;
   applyTheme(state.place);
@@ -79,7 +77,7 @@ if (typeof engine.onNote === 'function') {
   engine.onNote((n) => hud.flash(degreeName(live.state.key || DEFAULT_KEY, n.degree)));
 }
 // для проверок: движок доступен в консоли только при ?debug в адресе
-if (/[?&]debug\b/.test(location.search)) window.__engine = engine;
+if (/[?&]debug\b/.test(location.search)) { window.__engine = engine; window.__store = store; }
 
 engine.onStep((i) => { live.step = i; trail.setStep(i); hud(live.state, live); });
 
@@ -142,7 +140,6 @@ function save() {
 })();
 
 // --- горячие клавиши для живого исполнения
-const FX_KEYS = { KeyQ: 'a', KeyW: 'b', KeyE: 'p' };
 // живая игра: нижний ряд клавиш — ступени лада 0…7 голосом B (по e.code, поэтому работает и в русской раскладке)
 const NOTE_KEYS = { KeyZ: 0, KeyX: 1, KeyC: 2, KeyV: 3, KeyB: 4, KeyN: 5, KeyM: 6, Comma: 7 };
 const typing = (t) => t instanceof Element && t.matches('input, textarea, select, [contenteditable=""], [contenteditable="true"]');
@@ -163,7 +160,6 @@ window.addEventListener('keydown', (e) => {
     return;
   }
   if (e.code === 'KeyR') { toggleRec(); return; }
-  if (FX_KEYS[e.code]) { store.update((s) => ({ ...s, fxTarget: FX_KEYS[e.code] })); return; }
   if (e.key === '/' || e.code === 'Slash') {
     e.preventDefault();
     const input = $('.place-bar__input');

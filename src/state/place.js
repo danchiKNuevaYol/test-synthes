@@ -178,7 +178,13 @@ export function placeToState(query, fxTarget = 'a') {
   const melody = makeMelody(mrnd, mus.rests, place.weather);
   const swing = clamp(mus.swing + (mrnd() - 0.5) * 0.12 + (place.night ? 0.02 : 0), 0.05, 0.35);
 
-  return { ...st, key, melody, swing, scene: null, fxTarget, place };
+  // Макро-ползунки показывают, где сейчас стоят ведомые ими параметры (значения детерминированы местом)
+  const macro = {
+    a: { character: st.a.shape, space: st.fx.a.reverb },
+    b: { character: st.b.texture, space: st.fx.b.reverb },
+  };
+
+  return { ...st, key, melody, swing, macro, scene: null, fxTarget, place };
 }
 
 // Добавляет удары в свободные шаги, пока их не станет хотя бы min
