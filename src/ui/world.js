@@ -8,7 +8,7 @@
 import p5 from 'p5';
 import { engine } from '../audio/engine.js';
 import { cloudPos, horizonY } from '../world/geometry.js';
-import { skyColors, mixC, scaleC, lumC, clamp, smooth } from '../world/palette.js';
+import { skyColors, mixC, scaleC, lumC, clamp } from '../world/palette.js';
 
 const MAX_PARTS = 200;
 const STEP = 6;                                               // шаг по x у хребтов, px
@@ -284,11 +284,6 @@ function sketch(store, live, bridge) {
       p.endShape(p.CLOSE);
     }
 
-    function drawTreeShape(t, x, y, h, hw, sway) {
-      p.beginShape();
-      for (const [px, py] of t) p.vertex(x + px * (hw / (h * 0.2)) + sway * Math.pow(-py / h, 1.6), y + py);
-      p.endShape(p.CLOSE);
-    }
     // шаблон сосны, чтобы не пересчитывать контур каждый кадр
     const PINE = pine(1, 0.2);
     function tree(x, y, h, col, sway) {
@@ -393,19 +388,19 @@ function sketch(store, live, bridge) {
     function drawVoiceB(hy, b) {
       const n = Math.ceil(W / 6) + 1, cyc = p.lerp(1.5, 12, clamp(b.tune));
       const amp = H * (0.0035 + lv.b * 0.04), ph = clock * (2.2 + lv.b * 3);
-      const live = (0.35 + 0.65 * ease);
+      const vis = 0.35 + 0.65 * ease;
       const ys = new Array(n);
       for (let i = 0; i < n; i++) {
         const u = i / (n - 1), env = Math.pow(Math.sin(Math.PI * u), 0.8);
         ys[i] = hy + (Math.sin(u * cyc * 6.283 + ph) + 0.25 * Math.sin(u * cyc * 5.1 * 6.283 - ph * 0.7)) * amp * env;
       }
-      vGradient(hy - 0.07 * H, 0.14 * H, [[0, BLUE, 0], [0.5, BLUE, (0.05 + 0.11 * lv.b) * live], [1, BLUE, 0]]);
+      vGradient(hy - 0.07 * H, 0.14 * H, [[0, BLUE, 0], [0.5, BLUE, (0.05 + 0.11 * lv.b) * vis], [1, BLUE, 0]]);
       p.push();
       const g = ctx();
       g.lineJoin = 'round'; g.lineCap = 'round';
       const line = (wgt, col, al) => {
         const gr = g.createLinearGradient(0, 0, W, 0);
-        gr.addColorStop(0, css(col, 0)); gr.addColorStop(0.1, css(col, al * live)); gr.addColorStop(0.9, css(col, al * live)); gr.addColorStop(1, css(col, 0));
+        gr.addColorStop(0, css(col, 0)); gr.addColorStop(0.1, css(col, al * vis)); gr.addColorStop(0.9, css(col, al * vis)); gr.addColorStop(1, css(col, 0));
         g.strokeStyle = gr; g.lineWidth = wgt;
         g.beginPath();
         for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * W; if (i) g.lineTo(x, ys[i]); else g.moveTo(x, ys[i]); }
@@ -558,8 +553,7 @@ function sketch(store, live, bridge) {
 
 export function mountWorld(el, store, live) {
   const bridge = { state: null, unsubscribe: null, touch: null };
-  const inst = new p5(sketch(store, live, bridge), el);
-  void inst; void smooth;
+  new p5(sketch(store, live, bridge), el);
   return function update(state) {
     bridge.state = state;
     if (bridge.touch) bridge.touch();

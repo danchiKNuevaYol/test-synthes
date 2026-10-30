@@ -1,1 +1,3 @@
-/* .world — заполняется */
+/* Мир: пейзаж на весь экран (p5), под всеми блоками, мышь пропускает к ручкам */
+.world { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.world canvas { display: block; position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
