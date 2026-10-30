@@ -4,6 +4,7 @@
 
 import { horizonY, tuneFromHorizonY } from '../world/geometry.js';
 import { FORMATS, clamp01 } from './format.js';
+import { sign } from './signs.js';
 
 const STEP = 0.02;
 const CLICK_SLOP = 4;
@@ -14,13 +15,13 @@ export function mountHorizonHandle(el, store, ui) {
          aria-label="Горизонт — голос B: высота" aria-valuemin="0" aria-valuemax="100">
       <span class="horizon-handle__line" aria-hidden="true"></span>
       <span class="horizon-handle__grip" aria-hidden="true">
-        <svg viewBox="0 0 28 16" width="28" height="16">
-          <rect class="horizon-handle__pill" x="0.5" y="0.5" width="27" height="15" rx="7.5"/>
-          <path class="horizon-handle__arrows" d="M14 3.2 11.2 6.4h5.6zM14 12.8l-2.8-3.2h5.6z"/>
+        <svg viewBox="0 0 36 18" width="36" height="18">
+          <rect class="horizon-handle__pill" x="0.5" y="0.5" width="35" height="17"/>
+          <path class="horizon-handle__arrows" d="M9 3.5v11M6.2 6.3 9 3.5l2.8 2.8M6.2 11.7 9 14.5l2.8-2.8M16 6.5h14M16 11.5h14"/>
         </svg>
       </span>
       <span class="horizon-handle__caption">
-        <span class="horizon-handle__name">СТИХИЯ</span>
+        <span class="horizon-handle__name">${sign('b')}СТИХИЯ</span>
         <span class="horizon-handle__values"></span>
       </span>
     </div>`;

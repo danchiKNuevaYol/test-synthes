@@ -1,16 +1,16 @@
 // Блок .trail — ТРОПА: 16 наблюдений частиц. Четыре строки (капля, щелчок, треск, раскат) × 16 шагов,
-// справа — случайный узор, сдвиг влево/вправо, стереть. Выглядит как пометки в полевом блокноте.
+// справа — случайный узор, сдвиг влево/вправо, стереть. Пометки чёрной тушью: ни цвета, ни заливок.
 
 import { TRACKS } from '../state/scenes.js';
 
-// Значки частиц (viewBox 16×16): капля, точка-щелчок, искра-треск, зигзаг-раскат
+// Значки частиц (viewBox 16×16), всё контуром тушью: капля — штрих с точкой, щелчок — точка,
+// треск — звёздочка из 3 штрихов, раскат — зигзаг
 const GLYPHS = {
-  drop: '<path d="M8 2.2C8 2.2 4 7 4 9.8a4 4 0 0 0 8 0C12 7 8 2.2 8 2.2z" fill="currentColor" stroke="none"/>',
-  click: '<circle cx="8" cy="8" r="2.6" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="5.4" fill="none" opacity="0.45"/>',
-  crackle: '<path d="M8 1.8v12.4M1.8 8h12.4M4 4l8 8M12 4l-8 8" opacity="0.55"/><path d="M8 3.8v8.4M3.8 8h8.4"/>',
-  boom: '<path d="M1.5 8.5 4 8.5 5.6 4 8 12.5 10.2 3.5 11.8 8.5 14.5 8.5"/>',
+  drop: '<path d="M8 2.2v6"/><circle cx="8" cy="12" r="1.3" fill="currentColor" stroke="none"/>',
+  click: '<circle cx="8" cy="8" r="1.9" fill="currentColor" stroke="none"/>',
+  crackle: '<path d="M8 2.6v10.8M3.3 5.3l9.4 5.4M12.7 5.3l-9.4 5.4"/>',
+  boom: '<path d="M1.8 10 4.9 4.2 8 11.8 11.1 4.2 14.2 10"/>',
 };
-const COLORS = { drop: 'var(--ch-a)', click: 'var(--ch-b)', crackle: 'var(--ch-p)', boom: 'var(--ch-master)' };
 const DENSITY = [0.32, 0.3, 0.26, 0.1];
 
 const svg = (id, cls) => `<svg class="${cls}" viewBox="0 0 16 16" aria-hidden="true">${GLYPHS[id]}</svg>`;
@@ -20,9 +20,9 @@ const withSteps = (s, steps) => ({ ...s, scene: null, steps });
 export function mountTrail(el, store) {
   const nums = Array.from({ length: 16 }, (_, i) => `<span class="trail__num${i % 4 === 0 ? ' is-beat' : ''}">${i + 1}</span>`).join('');
   const labels = TRACKS.map((t) => `
-    <div class="trail__label" style="--row-color:${COLORS[t.id]}">${svg(t.id, 'trail__glyph')}<span>${t.name}</span></div>`).join('');
+    <div class="trail__label">${svg(t.id, 'trail__glyph')}<span>${t.name}</span></div>`).join('');
   const rows = TRACKS.map((t, r) => `
-    <div class="trail__row" style="--row-color:${COLORS[t.id]}">
+    <div class="trail__row">
       ${Array.from({ length: 16 }, (_, i) => `
         <button type="button" class="trail__cell${i % 4 === 0 ? ' is-beat' : ''}" data-row="${r}" data-step="${i}"
           aria-pressed="false" aria-label="${t.name}, шаг ${i + 1}">${svg(t.id, 'trail__mark')}</button>`).join('')}

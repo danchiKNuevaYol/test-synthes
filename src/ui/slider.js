@@ -1,16 +1,18 @@
 // Блок .slider — тонкий горизонтальный регулятор: название слева, значение справа.
 // Разметка: <div class="slider" data-param="a.tune" data-label="ВЫСОТА" data-format="hz-a" data-default="0.4" data-channel="a"></div>
 //   data-param   — путь параметра ('*' — текущая цепочка эффектов, fxTarget)
-//   data-channel — цвет заливки: a | b | p | * (цвет текущей цепочки); без него — цвет текста
+//   data-channel — тип линии заливки: a — сплошная, b — двойная, p — пунктир, * (линия текущей цепочки); без него — сплошная
+//   data-sign    — знак канала перед названием: a | b | p | m (общий)
 //   data-format, data-default — как показывать значение; значение по двойному клику
 //
 // Управление: перетаскивание и клик по дорожке, колесо, стрелки ±0.02, Home/End, двойной клик.
 
 import { readParam, setParam } from '../state/store.js';
 import { FORMATS, clamp01 } from './format.js';
+import { sign } from './signs.js';
 
 const CHANNELS = ['a', 'b', 'p'];
-const THUMB = 11; // диаметр бегунка, px
+const THUMB = 9; // сторона бегунка, px
 
 export function mountSlider(el, store) {
   const d = el.dataset;
@@ -19,7 +21,7 @@ export function mountSlider(el, store) {
   const label = d.label || '';
   el.innerHTML = `
     <div class="slider__head">
-      <span class="slider__label">${label}</span>
+      <span class="slider__label">${d.sign ? sign(d.sign) : ''}${label}</span>
       <span class="slider__value"></span>
     </div>
     <div class="slider__track" role="slider" tabindex="0" aria-label="${label || d.param}" aria-valuemin="0" aria-valuemax="100">

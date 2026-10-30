@@ -1,9 +1,11 @@
 // Блок .weather-kit — ПОГОДА: цепочка эффектов выбранного канала.
-// Сверху переключатель канала (небо / горизонт / земля), ниже четыре ступени сверху вниз:
-// ЖАР (drive) → МАРЕВО (mod) → УЩЕЛЬЕ (delay) → ДАЛЬ (reverb). Ползунки правят fx.<канал>.<параметр>.
+// Сверху переключатель канала (небо ○ / горизонт ═ / земля ⁘), ниже четыре ступени сверху вниз:
+// ЖАР (drive) → МАРЕВО (mod) → УЩЕЛЬЕ (delay) → ДАЛЬ (reverb). Ползунки правят fx.<канал>.<параметр>;
+// линия заливки ползунка (сплошная / двойная / пунктир) показывает, чья это цепочка.
 
 import { setParam } from '../state/store.js';
 import { mountSlider } from './slider.js';
+import { sign } from './signs.js';
 
 const TARGETS = [
   { id: 'a', name: 'НЕБО' },
@@ -27,7 +29,7 @@ const ARROW = '<svg viewBox="0 0 24 12" aria-hidden="true"><path d="M12 0v7"/><p
 
 export function mountWeatherKit(el, store) {
   const seg = TARGETS.map((t) => `
-    <button type="button" class="weather-kit__target weather-kit__target--${t.id}" role="radio" data-target="${t.id}" aria-checked="false">${t.name}</button>`).join('');
+    <button type="button" class="weather-kit__target weather-kit__target--${t.id}" role="radio" data-target="${t.id}" aria-checked="false">${sign(t.id)}<span>${t.name}</span></button>`).join('');
   const chain = STAGES.map((st, i) => `
     ${i ? `<div class="weather-kit__arrow">${ARROW}</div>` : ''}
     <div class="weather-kit__stage">

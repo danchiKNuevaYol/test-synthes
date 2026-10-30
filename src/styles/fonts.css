@@ -18,10 +18,10 @@
 */
 
 :root {
-  --font-display: "Cormorant Garamond", "PT Serif", Georgia, serif;       /* название места, крупные заголовки */
-  --font-ui:      "Inter", "Helvetica Neue", Arial, sans-serif;            /* подписи панелей и регуляторов */
-  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;        /* время, счётчики, поле места */
+  --font-display: "Cormorant Garamond", "PT Serif", Georgia, serif;       /* ТОЛЬКО название места и заголовок листа */
+  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;        /* всё остальное: подписи, цифры, кнопки */
+  --font-ui:      var(--font-mono);                                        /* интерфейс целиком — моно */
 
   --fs-label: 10px;    /* мелкие подписи */
-  --ls-caps: 0.16em;   /* разрядка заглавных */
+  --ls-caps: 0.14em;   /* разрядка заглавных */
 }

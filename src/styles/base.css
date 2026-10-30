@@ -1,28 +1,52 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body {
-  background: #0b0d12;
+  background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-ui);
+  font: 400 11px/1.4 var(--font-mono);
   overflow: hidden;
+  -webkit-font-smoothing: antialiased;
 }
-button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; }
-button:disabled { opacity: 0.35; cursor: default; }
-input { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; border-radius: 2px; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; border-radius: 0; }
+button:disabled { opacity: 0.3; cursor: default; }
+input { font: inherit; color: inherit; border-radius: 0; }
+/* Фокус везде один: тонкая пунктирная обводка */
+:focus-visible { outline: 1px dashed var(--ink); outline-offset: 3px; }
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
+/* Панели: бумага ~0.92, рамка 1px тушью, прямые углы, ни блюра, ни тени */
+.place-bar, .sheet, .weather-kit, .field-map, .trail, .recorder {
+  background: var(--panel); border: 1px solid var(--ink); border-radius: 0;
+  box-shadow: none; color: var(--ink);
+}
+
+/* Заголовок панели: заглавные моно и волосяная линейка до края */
+.field-map__title, .trail__title, .weather-kit__title, .recorder__title, .sheet__overline {
+  display: flex; align-items: center; gap: 8px; margin: 0; white-space: nowrap;
+  font: 500 10px/1.2 var(--font-mono); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--ink);
+}
+.field-map__title::after, .trail__title::after, .weather-kit__title::after, .recorder__title::after, .sheet__overline::after {
+  content: ''; flex: 1; min-width: 8px; height: 1px; background: var(--ink-faint);
+}
+
+/* Знак канала (см. src/ui/signs.js): линия, а не символ шрифта */
+.sign { display: inline-block; width: 10px; height: 10px; flex: none; overflow: visible; vertical-align: -1px; }
+.sign__ink { fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; }
+.sign__ink .dot { fill: currentColor; stroke: none; }
+.sign__halo { fill: none; stroke: var(--paper); stroke-width: 4.4; stroke-linecap: round; }
+.sign__halo .dot { fill: var(--paper); stroke: var(--paper); stroke-width: 3; }
+
 /* Маленький экран: не блокируем, только предупреждаем */
 body::after {
   content: "Лучше всего — на экране от 1024 px";
   display: none;
   position: fixed; left: 50%; top: 8px; transform: translateX(-50%); z-index: 50;
-  padding: 4px 12px; border-radius: 999px; pointer-events: none;
-  background: var(--glass-strong); color: var(--ink-soft);
-  font: 500 10px var(--font-ui); letter-spacing: 0.08em; white-space: nowrap;
+  padding: 4px 12px; pointer-events: none;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink);
+  font: 500 10px var(--font-mono); letter-spacing: 0.08em; white-space: nowrap;
 }
 @media (max-width: 1023px) { body::after { display: block; } }

@@ -1,9 +1,11 @@
 // Блок .sky-handle — облако в небе = голос A · ВОЗДУХ.
 // Слой на весь экран ничего не ловит; ловит только кольцо-ручка на месте облака (рисует его p5, см. world.js).
+// Ручка — линейный рисунок: кольцо с перекрестием, подпись со знаком канала A (○).
 // Тянем облако: x — ВЫСОТА (a.tune), y — ПЛОТНОСТЬ (a.shape). Клик без сдвига открывает лист наблюдения.
 
 import { cloudPos, cloudFromPoint } from '../world/geometry.js';
 import { FORMATS, clamp01 } from './format.js';
+import { sign } from './signs.js';
 
 const STEP = 0.02;      // шаг стрелок
 const CLICK_SLOP = 4;   // сдвиг меньше 4px — это клик, а не перетаскивание
@@ -13,11 +15,13 @@ export function mountSkyHandle(el, store, ui) {
     <div class="sky-handle__grip" role="slider" tabindex="0" aria-orientation="horizontal"
          aria-label="Облако — голос A: высота и плотность" aria-valuemin="0" aria-valuemax="100">
       <svg class="sky-handle__ring" viewBox="0 0 64 64" aria-hidden="true">
+        <circle class="sky-handle__halo" cx="32" cy="32" r="30"/>
         <circle class="sky-handle__circle" cx="32" cy="32" r="30"/>
-        <path class="sky-handle__tick" d="M32 3v6M32 55v6M3 32h6M55 32h6"/>
+        <path class="sky-handle__cross" d="M25 32h14M32 25v14"/>
+        <path class="sky-handle__tick" d="M32 0v7M32 57v7M0 32h7M57 32h7"/>
       </svg>
       <span class="sky-handle__caption">
-        <span class="sky-handle__name">ВОЗДУХ</span>
+        <span class="sky-handle__name">${sign('a')}ВОЗДУХ</span>
         <span class="sky-handle__values"></span>
       </span>
     </div>`;

@@ -1,9 +1,11 @@
 // Блок .field-map — план местности = микшер.
 // Слушатель стоит внизу по центру, три источника (ВОЗДУХ, СТИХИЯ, ЧАСТИЦЫ) — вокруг него.
 // Ближе — громче (mix.<канал>), левее/правее — панорама (pan.<канал>). Общую громкость и тон здесь не трогаем.
+// Источник — знак канала (○ воздух, ═ стихия, ⁘ частицы) тушью; кольцо уровня вокруг него — тонкая окружность.
 
 import { setParam } from '../state/store.js';
 import { FORMATS, clamp01 } from './format.js';
+import { sign } from './signs.js';
 
 const CHANNELS = [
   { id: 'a', letter: 'A', name: 'ВОЗДУХ' },
@@ -34,7 +36,7 @@ export function mountFieldMap(el, store) {
                aria-label="${c.name}: расстояние и сторона" aria-valuemin="0" aria-valuemax="100"
                title="${c.name} — ближе: громче, в сторону: панорама">
             <span class="field-map__ring" aria-hidden="true"></span>
-            <span class="field-map__dot" aria-hidden="true"></span>
+            <span class="field-map__dot" aria-hidden="true">${sign(c.id, 'field-map__sign', true)}</span>
             <span class="field-map__label" aria-hidden="true">${c.letter}<span class="field-map__full"> ${c.name}</span></span>
           </div>`).join('')}
       </div>

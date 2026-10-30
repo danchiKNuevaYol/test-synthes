@@ -1,6 +1,6 @@
 // Блок .wave-switch — выбор формы волны голоса: четыре значка с названием звука под каждым.
 // Разметка: <div class="wave-switch" data-param="a.wave" data-channel="a"></div>
-// Название звука зависит от голоса: для a.* — ГУЛ/ШЕЛЕСТ/…, для b.* — СВИСТ/ВОЛНА/…
+// Значки — линейные контуры. Название звука зависит от голоса: для a.* — ГУЛ/ШЕЛЕСТ/…, для b.* — СВИСТ/ВОЛНА/…
 
 import { WAVES, WAVE_TITLES, NAMES_A, NAMES_B } from '../state/scenes.js';
 import { readParam, setParam } from '../state/store.js';
@@ -14,13 +14,17 @@ const ICONS = {
 
 export function mountWaveSwitch(el, store) {
   const { param, channel } = el.dataset;
+  // Голос B — двойная линия (знак ═): тот же контур, дважды, со сдвигом по вертикали
+  const icon = (w) => (channel === 'b'
+    ? `<path d="${ICONS[w]}" transform="translate(0 -1.6)"/><path d="${ICONS[w]}" transform="translate(0 1.6)"/>`
+    : `<path d="${ICONS[w]}"/>`);
   const names = param.startsWith('b.') ? NAMES_B : NAMES_A;
   el.setAttribute('role', 'radiogroup');
   el.setAttribute('aria-label', 'Форма волны');
   if (channel) el.classList.add(`wave-switch--${channel}`);
   el.innerHTML = WAVES.map((w) => `
     <button type="button" class="wave-switch__item" role="radio" data-wave="${w}" title="${WAVE_TITLES[w]}" aria-label="${names[w]} — ${WAVE_TITLES[w]}" aria-checked="false">
-      <svg class="wave-switch__icon" viewBox="0 0 32 22" aria-hidden="true"><path d="${ICONS[w]}"/></svg>
+      <svg class="wave-switch__icon" viewBox="0 0 32 22" aria-hidden="true">${icon(w)}</svg>
       <span class="wave-switch__name">${names[w]}</span>
     </button>`).join('');
 

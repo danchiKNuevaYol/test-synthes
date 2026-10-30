@@ -3,6 +3,7 @@
 
 import { mountSlider } from './slider.js';
 import { mountWaveSwitch } from './wave-switch.js';
+import { sign } from './signs.js';
 
 const VOICES = {
   a: {
@@ -28,6 +29,7 @@ const VOICES = {
 };
 
 const CLOSE_ICON = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8"/></svg>';
+const SIGN = { a: 'a', b: 'b' };   // знак голоса: A — ○ (сплошная линия), B — ═ (двойная)
 const FADE_MS = 200;
 
 export function mountSheet(el, store) {
@@ -45,7 +47,7 @@ export function mountSheet(el, store) {
     el.innerHTML = `
       <button type="button" class="sheet__close" aria-label="Закрыть" title="Закрыть (Esc)">${CLOSE_ICON}</button>
       <p class="sheet__overline">ЛИСТ НАБЛЮДЕНИЯ</p>
-      <h2 class="sheet__headline">${cfg.title}</h2>
+      <div class="sheet__head">${sign(SIGN[v])}<h2 class="sheet__headline">${cfg.title}</h2></div>
       <p class="sheet__text">${cfg.text}</p>
       <p class="sheet__caption">ФОРМА ЗВУКА</p>
       <div class="wave-switch" data-param="${v}.wave" data-channel="${v}"></div>
