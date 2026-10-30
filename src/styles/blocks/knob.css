@@ -1,0 +1,33 @@
+/* .knob — тонкое кольцо, риска-указатель и дуга значения. Тип линии дуги — по каналу:
+   A — сплошная 2px, B — двойная волосяная, Ч — пунктир из точек; общий и без канала — сплошная 1.25px. */
+.knob { --knob-size: 60px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; color: var(--ink); }
+
+.knob__dial { position: relative; width: var(--knob-size); height: var(--knob-size); cursor: grab; touch-action: none; outline: none; }
+.knob.is-drag .knob__dial { cursor: grabbing; }
+.knob__dial:focus-visible { outline: 1px dashed var(--ink); outline-offset: 2px; }
+.knob__svg { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: var(--ink); stroke-linecap: butt; }
+
+.knob__rail { stroke: var(--hair); stroke-width: 1; }
+.knob__end { stroke: var(--ink-faint); stroke-width: 1; }
+.knob__ring { fill: var(--paper); stroke: var(--ink); stroke-width: 1.25; transition: fill 0.12s; }
+.knob__tick { stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; }
+.knob__dial:hover .knob__ring, .knob.is-drag .knob__ring { fill: var(--ink); }
+.knob__dial:hover .knob__tick, .knob.is-drag .knob__tick { stroke: var(--paper); }
+
+/* дуги: по умолчанию видна только основная сплошная */
+.knob__arc { stroke: var(--ink); stroke-width: 1.5; display: none; }
+.knob__arc--solid { display: inline; }
+.knob--a .knob__arc--solid { stroke-width: 2; }
+.knob--b .knob__arc--solid, .knob--p .knob__arc--solid { display: none; }
+.knob--b .knob__arc--b1, .knob--b .knob__arc--b2 { display: inline; stroke-width: 1; }
+.knob--p .knob__arc--dots { display: inline; stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 0 3.6; }
+
+.knob__label { display: inline-flex; align-items: center; justify-content: center; gap: 4px; max-width: 100%;
+  font: 500 9px/1.2 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+.knob__label .sign { width: 9px; height: 9px; vertical-align: 0; }
+
+/* значение: плашка в рамке 1px над ручкой, пока её держат, наводят или она в фокусе */
+.knob__bubble { position: absolute; left: 50%; bottom: calc(100% + 4px); transform: translateX(-50%); z-index: 9; padding: 2px 6px;
+  background: var(--ink); color: var(--paper); border: 1px solid var(--ink);
+  font: 500 10px/1.3 var(--font-mono); letter-spacing: 0.04em; white-space: nowrap; pointer-events: none; }
+.knob__bubble[hidden] { display: none; }

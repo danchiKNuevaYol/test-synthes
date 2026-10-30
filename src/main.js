@@ -1,4 +1,4 @@
-// Точка входа: собирает пейзаж и ручки внутри него из разметки index.html.
+// Точка входа: собирает рисунок (мир) и прибор под ним из разметки index.html.
 // Каждый блок интерфейса — модуль в src/ui/ с тем же именем, что и CSS-класс блока.
 
 import { createStore } from './state/store.js';
@@ -6,46 +6,52 @@ import { PRESETS, placeToState, normalizeQuery } from './state/place.js';
 import { engine } from './audio/engine.js';
 import { uiTheme } from './world/palette.js';
 import { mountWorld } from './ui/world.js';
-import { mountSkyHandle } from './ui/sky-handle.js';
-import { mountHorizonHandle } from './ui/horizon-handle.js';
 import { mountHud } from './ui/hud.js';
 import { mountPlaceBar, tuneTo } from './ui/place-bar.js';
-import { mountSheet } from './ui/sheet.js';
+import { mountWaveSwitch } from './ui/wave-switch.js';
+import { mountKnob } from './ui/knob.js';
+import { mountFader } from './ui/fader.js';
+import { mountMeter } from './ui/meter.js';
+import { sign } from './ui/signs.js';
 import { mountWeatherKit } from './ui/weather-kit.js';
-import { mountFieldMap } from './ui/field-map.js';
 import { mountTrail } from './ui/trail.js';
 import { mountRecorder } from './ui/recorder.js';
 import { mountHintLine } from './ui/hint-line.js';
 
 const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
 
 // Место берётся из адреса (?place=Озеро Тишины, 4:12) — так прибором делятся ссылкой
 const startQuery = normalizeQuery(new URLSearchParams(location.search).get('place') || '') || PRESETS[0].query;
 const store = createStore(placeToState(startQuery));
 const live = { state: store.get(), step: -1, playing: false, recording: false };   // для пейзажа (p5) и заголовка
 
-// --- блоки: порядок монтирования важен только для стопки слоёв (она задана в CSS)
-const ui = { openSheet: (voice) => sheet.open(voice) };   // sheet появится ниже — к клику он уже есть
+// --- блоки. Всё, что в index.html размечено атрибутами data-*, подключается по классу
 const world = mountWorld($('.world'), store, live);
-const skyHandle = mountSkyHandle($('.sky-handle'), store, ui);
-const horizonHandle = mountHorizonHandle($('.horizon-handle'), store, ui);
 const hud = mountHud($('.hud'));
 const placeBar = mountPlaceBar($('.place-bar'), store);
-const sheet = mountSheet($('.sheet'), store);
-const weatherKit = mountWeatherKit($('.weather-kit'), store);
-const fieldMap = mountFieldMap($('.field-map'), store);
+const waveSwitches = $$('.wave-switch[data-param]').map((el) => mountWaveSwitch(el, store));
+const knobs = $$('.knob').map((el) => mountKnob(el, store));
+const faders = $$('.fader').map((el) => mountFader(el, store));
+const meters = $$('[data-meter]').map((el) => ({ id: el.dataset.meter, update: mountMeter(el) }));
+const weatherKit = mountWeatherKit($('.weather-kit'), store);   // ручки погоды рисует он сам (.knob внутри него)
 const trail = mountTrail($('.trail'), store);
 const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });
 mountHintLine($('.hint-line'));
+// знаки каналов в заголовках модулей и подписях полос микшера (SVG, а не символы шрифта)
+$$('.instrument [data-sign]').forEach((el) => { if (!el.classList.contains('knob')) el.insertAdjacentHTML('afterbegin', sign(el.dataset.sign)); });
 
-// --- нижняя кромка .hud в пикселях: по ней лист наблюдения (CSS-переменная --hud-bottom) узнаёт, докуда ему расти вверх
-function syncHudBottom() {
-  const bottom = Math.ceil($('.hud').getBoundingClientRect().bottom);
-  document.documentElement.style.setProperty('--hud-bottom', `${bottom}px`);
+// --- прибор рисуется в фиксированном размере (--instrument-w × --instrument-h в stage.css) и целиком
+// масштабируется под окно: ни один модуль не может выйти из рамки. Рисунку остаётся всё остальное место.
+const GUTTER = 12;
+const designSize = (name) => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)) || 1;
+function fit() {
+  const w = designSize('--instrument-w'), h = designSize('--instrument-h');
+  const k = Math.min(1.25, (innerWidth - 2 * GUTTER) / w, (innerHeight * 0.5) / h);   // прибор — не больше половины высоты
+  document.documentElement.style.setProperty('--k', String(Math.max(0.3, k).toFixed(4)));
 }
-// ResizeObserver ловит смену места, подсказки при простое и перенос строк; resize — на случай смены окна
-if (typeof ResizeObserver === 'function') new ResizeObserver(syncHudBottom).observe($('.hud'));
-window.addEventListener('resize', syncHudBottom);
+fit();
+window.addEventListener('resize', fit);
 
 // --- тема времени суток: CSS-переменные на <html> при смене времени или погоды
 let themeKey = '';
@@ -57,13 +63,12 @@ function applyTheme(place) {
   Object.entries(vars).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
 }
 
-const views = [world, skyHandle, horizonHandle, placeBar, sheet.update, weatherKit, fieldMap.update, trail.update];
+const views = [world, placeBar, ...waveSwitches, ...knobs, ...faders, weatherKit, trail.update];
 function render(state) {
   live.state = state;
   applyTheme(state.place);
   views.forEach((update) => update(state));
   hud(state, live);
-  syncHudBottom();
   engine.apply(state);
 }
 store.subscribe(render);
@@ -80,7 +85,6 @@ function setUi(patch) {
   if (!transport.playing) { live.step = -1; trail.setStep(-1); }
   recorder.update(transport);
   hud(live.state, live);
-  syncHudBottom();   // подсказка в .hud появляется только при простое
 }
 setUi({});
 
@@ -122,9 +126,10 @@ function save() {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
-// --- каждый кадр: уровни на плане местности и таймер записи
+// --- каждый кадр: индикаторы уровня микшера (в покое — ноль) и таймер записи
 (function loop() {
-  fieldMap.setLevels(transport.playing ? engine.meters() : null);
+  const levels = transport.playing ? engine.meters() : null;
+  meters.forEach((m) => m.update(levels ? levels[m.id] : 0));
   if (transport.rec === 'recording') recorder.tick(engine.recElapsed());
   requestAnimationFrame(loop);
 })();
@@ -139,15 +144,13 @@ window.addEventListener('keydown', (e) => {
     return;
   }
   if (e.key === 'Escape') {
-    if (sheet.isOpen()) sheet.close();
-    else if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     return;
   }
   if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
   if (e.code === 'Space') { e.preventDefault(); transport.playing ? stop() : play(); return; }
   if (e.code === 'KeyR') { toggleRec(); return; }
   if (FX_KEYS[e.code]) { store.update((s) => ({ ...s, fxTarget: FX_KEYS[e.code] })); return; }
-  if (e.code === 'KeyA' || e.code === 'KeyB') { sheet.open(e.code === 'KeyA' ? 'a' : 'b'); return; }
   if (e.key === '/' || e.code === 'Slash') {
     e.preventDefault();
     const input = $('.place-bar__input');

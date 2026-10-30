@@ -1,16 +1,16 @@
-// Блок .recorder — запись экспедиции: кнопка REC, таймер, старт/стоп/скачать, темп, ОБЩИЙ и СОЛНЦЕ.
+// Блок .recorder — запись экспедиции: кнопка REC, таймер, старт/стоп/скачать, темп. (ОБЩИЙ и СОЛНЦЕ — в микшере.)
 // mountRecorder(el, store, actions) → { update(ui), tick(seconds) }; actions = { play, stop, toggleRec, save }.
-// Все значки — инлайн SVG (символы вроде «⭳» в системных шрифтах нет).
-
-import { mountSlider } from './slider.js';
+// Все значки — инлайн SVG-контуры (символы вроде «⭳» в системных шрифтах нет). REC — окружность; запись — залитый круг.
 
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const BPM = { min: 40, max: 200, step: 2 };
 
+// Значки — контуры тушью (stroke 1.25), без заливок
+const LINE = 'fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"';
 const ICONS = {
-  play: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.5v11l9-5.5z" fill="currentColor"/></svg>',
-  stop: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor"/></svg>',
-  save: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M4.5 7 8 10.5 11.5 7M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  play: `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10l8-5z" ${LINE}/></svg>`,
+  stop: `<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3.5" y="3.5" width="9" height="9" ${LINE}/></svg>`,
+  save: `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8.5M4.7 7.4 8 10.7l3.3-3.3M2.8 13.5h10.4" ${LINE}/></svg>`,
 };
 
 export function mountRecorder(el, store, actions) {
@@ -18,7 +18,7 @@ export function mountRecorder(el, store, actions) {
     <h2 class="recorder__title">РЕКОРДЕР · ЭКСПЕДИЦИЯ</h2>
     <div class="recorder__main">
       <button type="button" class="recorder__rec" aria-pressed="false" aria-label="Запись (R)" title="Запись — R">
-        <svg viewBox="0 0 48 48" aria-hidden="true"><circle class="recorder__ring" cx="24" cy="24" r="22" fill="none" stroke-width="1.5"/><circle class="recorder__core" cx="24" cy="24" r="14"/></svg>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle class="recorder__ring" cx="24" cy="24" r="22"/><circle class="recorder__core" cx="24" cy="24" r="13"/></svg>
       </button>
       <div class="recorder__readout">
         <output class="recorder__time" aria-live="off">00:00</output>
@@ -37,10 +37,6 @@ export function mountRecorder(el, store, actions) {
         <output class="recorder__bpm">78</output>
         <button type="button" class="recorder__step" data-bpm="1" aria-label="Темп быстрее">+</button>
       </div>
-    </div>
-    <div class="recorder__sliders">
-      <div class="slider" data-param="mix.master" data-label="ОБЩИЙ" data-default="0.8"></div>
-      <div class="slider" data-param="tone" data-label="СОЛНЦЕ" data-default="0.75"></div>
     </div>`;
 
   const q = (s) => el.querySelector(s);
@@ -62,12 +58,7 @@ export function mountRecorder(el, store, actions) {
     });
   }));
 
-  // ползунки рисует slider.js; значения берут из хранилища
-  const sliders = [...el.querySelectorAll('.slider')].map((s) => mountSlider(s, store));
-  function onState(state) {
-    bpm.textContent = String(state.bpm);
-    sliders.forEach((u) => u?.(state));
-  }
+  function onState(state) { bpm.textContent = String(state.bpm); }
   store.subscribe(onState);
   onState(store.get());
 
