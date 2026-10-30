@@ -18,11 +18,10 @@
 */
 
 :root {
-  --font-display: "Inter", "Helvetica Neue", Arial, sans-serif;            /* название прибора */
+  --font-display: "Cormorant Garamond", "PT Serif", Georgia, serif;       /* название места, крупные заголовки */
   --font-ui:      "Inter", "Helvetica Neue", Arial, sans-serif;            /* подписи панелей и регуляторов */
-  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;        /* дисплей и счётчики */
+  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;        /* время, счётчики, поле места */
 
-  --fs-title: 12px;    /* заголовки панелей */
-  --fs-label: 10px;    /* подписи регуляторов */
-  --ls-caps: 0.12em;   /* разрядка заглавных */
+  --fs-label: 10px;    /* мелкие подписи */
+  --ls-caps: 0.16em;   /* разрядка заглавных */
 }

@@ -1,1 +1,49 @@
-/* .trail — заполняется */
+/* .trail — ТРОПА, 16 наблюдений частиц: пометки в полевом блокноте на стекле */
+.trail { position: fixed; left: 290px; right: 310px; bottom: 34px; height: 150px; padding: 11px 16px 10px;
+  display: flex; flex-direction: column; gap: 6px; min-width: 0; overflow: hidden;
+  background: var(--glass); border: 1px solid var(--glass-line); border-radius: 14px; color: var(--ink);
+  backdrop-filter: blur(10px) saturate(1.1); -webkit-backdrop-filter: blur(10px) saturate(1.1); box-shadow: 0 6px 24px var(--shadow); }
+.trail__title { margin: 0; font: 500 10.5px var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+
+.trail__body { flex: 1; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0 14px; }
+
+/* Подписи строк: высота строк совпадает с полем справа */
+.trail__labels { display: grid; grid-template-rows: 14px repeat(4, 1fr); }
+.trail__label { display: flex; align-items: center; gap: 7px; font: 500 10.5px var(--font-ui); letter-spacing: 0.04em; color: var(--ink); white-space: nowrap; }
+.trail__label .trail__glyph { width: 13px; height: 13px; color: var(--row-color); fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.trail__field { position: relative; display: grid; grid-template-rows: 14px repeat(4, 1fr); min-width: 0; }
+.trail__nums, .trail__row { display: grid; grid-template-columns: repeat(16, 1fr); }
+.trail__num { text-align: center; font: 400 9px/14px var(--font-mono); color: var(--ink-soft); opacity: 0.7; }
+.trail__num.is-beat { opacity: 1; }
+.trail__num.is-now { color: var(--ink); opacity: 1; font-weight: 500; }
+
+/* Мягкое вертикальное свечение текущего шага: ширина ровно в один столбец */
+.trail__now { position: absolute; left: 0; top: 0; bottom: 0; width: calc(100% / 16); pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--glow) 18%, var(--glow) 82%, transparent); opacity: 0.55;
+  border-radius: 6px; transition: transform 0.06s linear; }
+.trail__now[hidden] { display: none; }
+
+/* Клетка — не кнопка, а пометка: выключенная это еле заметная черта, включённая — значок строки */
+.trail__cell { position: relative; display: grid; place-items: center; min-width: 0; padding: 0; border: 0; background: none; color: var(--row-color); border-radius: 6px; }
+.trail__cell::before { content: ''; width: 1px; height: 7px; background: var(--ink-soft); opacity: 0.35; transition: opacity 0.12s, transform 0.12s; }
+.trail__cell.is-beat::before { height: 11px; opacity: 0.6; }
+.trail__mark { position: absolute; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;
+  opacity: 0; transform: scale(0.5); transition: opacity 0.12s, transform 0.12s; }
+.trail__cell:hover::before { opacity: 0.9; }
+.trail__cell.is-on::before { opacity: 0; }
+.trail__cell.is-on .trail__mark { opacity: 1; transform: none; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--row-color) 55%, transparent)); }
+.trail__cell.is-on.is-now .trail__mark { transform: scale(1.3); }
+.trail__cell:focus-visible { outline: 2px solid var(--row-color); outline-offset: -2px; }
+
+/* Кнопки справа */
+.trail__tools { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding-top: 14px; }
+.trail__shift { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.trail__tool { height: 24px; padding: 0 12px; border: 1px solid var(--glass-line); border-radius: 12px; background: transparent; color: var(--ink);
+  font: 500 10.5px var(--font-ui); letter-spacing: 0.06em; white-space: nowrap; transition: background 0.15s, border-color 0.15s; }
+.trail__tool:hover { background: var(--glass-strong); border-color: var(--ink-soft); }
+.trail__tool:active { transform: translateY(1px); }
+.trail__tool--icon { padding: 0; display: grid; place-items: center; }
+.trail__tool--icon svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.trail__tool:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+@media (prefers-reduced-motion: reduce) { .trail__now, .trail__cell::before, .trail__mark { transition: none; } }

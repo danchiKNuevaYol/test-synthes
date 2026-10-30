@@ -1,1 +1,25 @@
-/* .sheet — заполняется */
+/* .sheet — ЛИСТ НАБЛЮДЕНИЯ: панель слева с точными настройками голоса */
+.sheet { --voice: var(--ink); position: fixed; left: 2.5vw; top: 18vh; width: 330px; max-height: 62vh; padding: 20px 20px 18px; overflow: auto;
+  background: var(--glass-strong); border: 1px solid var(--glass-line); border-radius: 14px; color: var(--ink);
+  backdrop-filter: blur(10px) saturate(1.1); -webkit-backdrop-filter: blur(10px) saturate(1.1); box-shadow: 0 10px 36px var(--shadow);
+  opacity: 0; transform: translateX(-14px); transition: opacity 0.2s ease, transform 0.2s ease; }
+.sheet[hidden] { display: none; }
+.sheet.is-open { opacity: 1; transform: none; }
+.sheet[data-voice="a"] { --voice: var(--ch-a); }
+.sheet[data-voice="b"] { --voice: var(--ch-b); }
+/* Цветная линия сверху — какой голос открыт */
+.sheet::before { content: ''; position: absolute; left: 20px; top: 0; width: 36px; height: 2px; border-radius: 0 0 2px 2px; background: var(--voice); }
+
+.sheet__close { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; display: grid; place-items: center; padding: 0;
+  border: 1px solid transparent; border-radius: 50%; background: none; color: var(--ink-soft); transition: color 0.15s, border-color 0.15s; }
+.sheet__close:hover { color: var(--ink); border-color: var(--glass-line); }
+.sheet__close svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+.sheet__close:focus-visible { outline: 2px solid var(--voice); outline-offset: 1px; }
+
+.sheet__overline { margin: 0 0 6px; font: 500 10.5px var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+.sheet__headline { margin: 0; font: 500 26px/1.1 var(--font-display); color: var(--ink); }
+.sheet__text { margin: 6px 0 16px; font: 400 12px/1.5 var(--font-ui); color: var(--ink-soft); }
+.sheet__caption { margin: 0 0 4px; font: 500 10px var(--font-ui); letter-spacing: 0.14em; color: var(--ink-soft); }
+.sheet .wave-switch { margin: 0 -4px 14px; }
+.sheet__sliders { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; border-top: 1px solid var(--glass-line); }
+@media (prefers-reduced-motion: reduce) { .sheet { transition: none; transform: none; } }

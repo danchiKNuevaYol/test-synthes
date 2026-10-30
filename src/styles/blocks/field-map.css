@@ -1,1 +1,84 @@
-/* .field-map — заполняется */
+/* .field-map — план местности: стеклянная карточка слева снизу */
+.field-map {
+  position: fixed; left: 2.5%; bottom: 3.5%; z-index: 4;
+  width: 240px; height: 190px; padding: 10px 12px 8px;
+  display: flex; flex-direction: column; gap: 6px;
+  background: var(--glass); border: 1px solid var(--glass-line); border-radius: 10px;
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: 0 6px 24px var(--shadow);
+  color: var(--ink); font-family: var(--font-ui);
+  user-select: none; -webkit-user-select: none;
+}
+
+.field-map__title {
+  margin: 0; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; line-height: 1.2;
+  text-transform: uppercase; color: var(--ink);
+}
+.field-map__legend {
+  margin: 0; font-size: 9.5px; line-height: 1.2; letter-spacing: 0.02em; white-space: nowrap; color: var(--ink-soft); text-align: center;
+}
+
+.field-map__area { position: relative; flex: 1; min-height: 0; }
+.field-map__contours { position: absolute; inset: 0; width: 100%; height: 100%; }
+.field-map__contours path {
+  fill: none; stroke: var(--ink); stroke-width: 1; stroke-opacity: 0.16; vector-effect: non-scaling-stroke;
+}
+.field-map__contours .field-map__axis { stroke-dasharray: 2 4; stroke-opacity: 0.12; }
+
+/* Поле, по которому ходят маркеры; снизу оставлено место слушателю */
+.field-map__plane { position: absolute; left: 14px; right: 14px; top: 10px; bottom: 22px; }
+
+.field-map__listener {
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  display: flex; align-items: flex-end; gap: 4px; pointer-events: none; color: var(--ink);
+}
+.field-map__ear { fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; opacity: 0.55; }
+.field-map__you { fill: currentColor; }
+.field-map__you-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; line-height: 1; padding-bottom: 1px; color: var(--ink-soft); }
+
+/* Маркер: точка канала, кольцо уровня и подпись */
+.field-map__marker {
+  --level: 0; --c: var(--ch-master);
+  position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px;
+  display: grid; place-items: center; cursor: grab; touch-action: none; outline: none; border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+}
+.field-map__marker--a { --c: var(--ch-a); }
+.field-map__marker--b { --c: var(--ch-b); }
+.field-map__marker--p { --c: var(--ch-p); }
+.field-map__marker.is-drag { cursor: grabbing; z-index: 2; }
+.field-map__marker:hover, .field-map__marker:focus-visible { z-index: 1; }
+
+.field-map__dot {
+  position: relative; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--c); border: 1px solid var(--glass-strong, var(--glass));
+  box-shadow: 0 0 0 1px var(--c); transition: transform 0.15s;
+}
+.field-map__marker.is-hover .field-map__dot,
+.field-map__marker.is-drag .field-map__dot { transform: scale(1.25); }
+.field-map__marker:focus-visible .field-map__dot { box-shadow: 0 0 0 1px var(--c), 0 0 0 4px var(--glass-line); }
+
+/* Кольцо пульсирует вместе с уровнем канала: --level задаёт JS из engine.meters() */
+.field-map__ring {
+  position: absolute; left: 50%; top: 50%; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%;
+  border: 1.5px solid var(--c); background: color-mix(in srgb, var(--c) 22%, transparent);
+  transform: scale(calc(0.4 + var(--level) * 1.2)); opacity: 0;
+  transition: transform 0.09s linear, opacity 0.09s linear; pointer-events: none;
+}
+.field-map__marker.has-level .field-map__ring { opacity: calc(0.25 + var(--level) * 0.7); }
+
+.field-map__label {
+  position: absolute; left: 100%; top: 50%; transform: translateY(-50%); margin-left: 1px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.12em; line-height: 1; white-space: nowrap;
+  color: var(--ink); pointer-events: none;
+}
+.field-map__full { display: none; font-weight: 500; letter-spacing: 0.1em; background: var(--glass-strong); border-radius: 3px; padding: 2px 4px; margin-left: 2px; }
+.field-map__marker.is-hover .field-map__full,
+.field-map__marker.is-drag .field-map__full,
+.field-map__marker:focus-visible .field-map__full { display: inline; }
+/* Маркеры у правого края: подпись уходит влево, чтобы не вылезти из карточки */
+.field-map__marker.is-right .field-map__label { left: auto; right: 100%; margin: 0 1px 0 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .field-map__ring, .field-map__dot { transition: none; }
+}

@@ -1,1 +1,50 @@
-/* .sky-handle — заполняется */
+/* .sky-handle — слой на весь экран; ловит мышь только кольцо на месте облака */
+.sky-handle {
+  position: fixed; inset: 0; z-index: 3;
+  pointer-events: none;
+}
+
+.sky-handle__grip {
+  position: absolute; width: 64px; height: 64px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto; cursor: grab; touch-action: none;
+  border-radius: 50%; outline: none; color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+.sky-handle__grip.is-drag { cursor: grabbing; }
+
+.sky-handle__ring { display: block; width: 100%; height: 100%; overflow: visible; }
+.sky-handle__circle {
+  fill: none; stroke: currentColor; stroke-width: 1; stroke-dasharray: 2 5; stroke-linecap: round;
+  opacity: 0.38; transition: opacity 0.2s, stroke-width 0.2s;
+  transform-origin: 32px 32px;
+}
+.sky-handle__tick { fill: none; stroke: currentColor; stroke-width: 1; opacity: 0; transition: opacity 0.2s; }
+
+/* Наведение, фокус и перетаскивание: кольцо ярче, появляются засечки */
+.sky-handle__grip.is-hover .sky-handle__circle,
+.sky-handle__grip:focus-visible .sky-handle__circle { opacity: 0.85; stroke-dasharray: none; }
+.sky-handle__grip.is-drag .sky-handle__circle { opacity: 1; stroke-width: 1.5; stroke-dasharray: none; }
+.sky-handle__grip.is-hover .sky-handle__tick,
+.sky-handle__grip:focus-visible .sky-handle__tick,
+.sky-handle__grip.is-drag .sky-handle__tick { opacity: 0.8; }
+.sky-handle__grip:focus-visible { box-shadow: 0 0 0 2px var(--ch-a); }
+
+/* Подпись под кольцом */
+.sky-handle__caption {
+  position: absolute; left: 50%; top: calc(100% + 4px); transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  white-space: nowrap; pointer-events: none;
+  font-family: var(--font-ui); font-size: 10px; line-height: 1.2; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink); opacity: 0.55; transition: opacity 0.2s;
+  text-shadow: 0 0 8px var(--shadow), 0 0 2px var(--shadow);
+}
+.sky-handle__name { font-weight: 600; }
+.sky-handle__values { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; }
+.sky-handle__grip.is-hover .sky-handle__caption,
+.sky-handle__grip:focus-visible .sky-handle__caption,
+.sky-handle__grip.is-drag .sky-handle__caption { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-handle__circle, .sky-handle__tick, .sky-handle__caption { transition: none; }
+}

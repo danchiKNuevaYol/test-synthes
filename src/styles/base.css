@@ -1,20 +1,28 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body {
-  background: radial-gradient(ellipse at 50% 30%, #c0a07a, var(--page) 70%);
-  color: var(--ink); font-family: var(--font-ui); overflow: hidden;
+  background: #0b0d12;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  overflow: hidden;
 }
-button { font: inherit; color: inherit; cursor: pointer; }
-button:disabled { opacity: 0.4; cursor: default; }
-:focus-visible { outline: 2px solid var(--ch-a); outline-offset: 2px; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; }
+button:disabled { opacity: 0.35; cursor: default; }
+input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; border-radius: 2px; }
 
-.stage { height: 100%; display: grid; place-items: center; }
-.stage__fit { position: relative; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
 
-/* Точка-маркер канала в заголовках */
-.dot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--ch-master); }
-.dot--a, .dot--drop { background: var(--ch-a); }
-.dot--b, .dot--click { background: var(--ch-b); }
-.dot--p, .dot--crackle, .dot--fx { background: var(--ch-p); }
-.dot--boom { background: #b0aeaa; }
-.dot--rec { background: var(--rec); }
+/* Маленький экран: не блокируем, только предупреждаем */
+body::after {
+  content: "Лучше всего — на экране от 1024 px";
+  display: none;
+  position: fixed; left: 50%; top: 8px; transform: translateX(-50%); z-index: 50;
+  padding: 4px 12px; border-radius: 999px; pointer-events: none;
+  background: var(--glass-strong); color: var(--ink-soft);
+  font: 500 10px var(--font-ui); letter-spacing: 0.08em; white-space: nowrap;
+}
+@media (max-width: 1023px) { body::after { display: block; } }
