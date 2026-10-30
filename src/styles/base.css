@@ -26,11 +26,11 @@ input { font: inherit; color: inherit; border-radius: 0; }
 }
 
 /* Заголовок модуля прибора: заглавные моно и волосяная линейка до края */
-.instrument__title, .trail__title, .weather-kit__title, .recorder__title {
+.instrument__title, .trail__title, .recorder__title {
   display: flex; align-items: center; gap: 7px; margin: 0; white-space: nowrap;
   font: 500 10px/1.2 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink);
 }
-.instrument__title::after, .trail__title::after, .weather-kit__title::after, .recorder__title::after {
+.instrument__title::after, .trail__title::after, .recorder__title::after {
   content: ''; flex: 1; min-width: 6px; height: 1px; background: var(--ink-faint);
 }
 

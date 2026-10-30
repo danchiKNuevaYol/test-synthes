@@ -35,10 +35,9 @@
           <h2 class="instrument__title visually-hidden" id="t-voice-a" data-sign="a">ГОЛОС A · ВОЗДУХ</h2>
           <div class="wave-switch" data-param="a.wave" data-channel="a"></div>
           <div class="instrument__sliders">
-            <div class="slider" data-param="a.tune"  data-label="ВЫСОТА"    data-channel="a" data-format="hz-a" data-default="0.4"></div>
-            <div class="slider" data-param="a.shape" data-label="ПЛОТНОСТЬ" data-channel="a" data-default="0.4"></div>
-            <div class="slider" data-param="a.mod"   data-label="ПОРЫВЫ"    data-channel="a" data-default="0.4"></div>
-            <div class="slider" data-param="a.level" data-label="СИЛА"      data-channel="a" data-default="0.7"></div>
+            <div class="slider" data-param="a.tune"           data-label="ВЫСОТА"       data-channel="a" data-format="hz-a" data-default="0.4"></div>
+            <div class="slider" data-param="macro.a.character" data-label="ХАРАКТЕР"     data-channel="a" data-hint="Плотность облака и порывы" data-default="0.4"></div>
+            <div class="slider" data-param="macro.a.space"     data-label="ПРОСТРАНСТВО" data-channel="a" data-hint="Даль и эхо" data-default="0.4"></div>
           </div>
         </section>
 
@@ -47,40 +46,32 @@
           <h2 class="instrument__title visually-hidden" id="t-voice-b" data-sign="b">ГОЛОС B · СТИХИЯ</h2>
           <div class="wave-switch" data-param="b.wave" data-channel="b"></div>
           <div class="instrument__sliders">
-            <div class="slider" data-param="b.tune"    data-label="ВЫСОТА" data-channel="b" data-format="hz-b" data-default="0.4"></div>
-            <div class="slider" data-param="b.texture" data-label="ЗЕРНО"  data-channel="b" data-default="0.4"></div>
-            <div class="slider" data-param="b.mod"     data-label="ДРОЖЬ"  data-channel="b" data-default="0.4"></div>
-            <div class="slider" data-param="b.level"   data-label="СИЛА"   data-channel="b" data-default="0.7"></div>
+            <div class="slider" data-param="b.tune"           data-label="ВЫСОТА"       data-channel="b" data-format="hz-b" data-default="0.4"></div>
+            <div class="slider" data-param="macro.b.character" data-label="ХАРАКТЕР"     data-channel="b" data-hint="Зерно и дрожь" data-default="0.4"></div>
+            <div class="slider" data-param="macro.b.space"     data-label="ПРОСТРАНСТВО" data-channel="b" data-hint="Даль и эхо" data-default="0.4"></div>
           </div>
         </section>
-
-        <!-- Погода: цепочка эффектов выбранного канала — ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ -->
-        <section class="instrument__module instrument__module--weather weather-kit" aria-label="Погода — цепочка эффектов"></section>
 
         <!-- Тропа: 16 наблюдений частиц -->
         <section class="instrument__module instrument__module--trail trail" aria-label="Тропа — 16 наблюдений частиц"></section>
 
-        <!-- Микшер: у каждого канала панорама, индикатор и фейдер; у общего вместо панорамы — СОЛНЦЕ (яркость) -->
+        <!-- Микшер: у каждого канала индикатор уровня и фейдер -->
         <section class="instrument__module instrument__module--mixer mixer" aria-labelledby="t-mixer">
           <h2 class="instrument__title visually-hidden" id="t-mixer">МИКШЕР</h2>
           <div class="mixer__strips">
             <div class="mixer__strip">
-              <div class="slider slider--compact" data-param="pan.a" data-label="ПАН" data-channel="a" data-format="pan" data-hint="Панорама воздуха" data-default="0.5" data-bipolar></div>
               <div class="mixer__body"><div class="meter" data-meter="a"></div><div class="fader" data-param="mix.a" data-label="A" data-channel="a" data-default="0.7"></div></div>
               <span class="mixer__name" data-sign="a">A</span>
             </div>
             <div class="mixer__strip">
-              <div class="slider slider--compact" data-param="pan.b" data-label="ПАН" data-channel="b" data-format="pan" data-hint="Панорама стихии" data-default="0.5" data-bipolar></div>
               <div class="mixer__body"><div class="meter" data-meter="b"></div><div class="fader" data-param="mix.b" data-label="B" data-channel="b" data-default="0.7"></div></div>
               <span class="mixer__name" data-sign="b">B</span>
             </div>
             <div class="mixer__strip">
-              <div class="slider slider--compact" data-param="pan.p" data-label="ПАН" data-channel="p" data-format="pan" data-hint="Панорама частиц" data-default="0.5" data-bipolar></div>
               <div class="mixer__body"><div class="meter" data-meter="p"></div><div class="fader" data-param="mix.p" data-label="Ч" data-channel="p" data-default="0.7"></div></div>
               <span class="mixer__name" data-sign="p">Ч</span>
             </div>
             <div class="mixer__strip mixer__strip--master">
-              <div class="slider slider--compact" data-param="tone" data-label="СОЛНЦЕ" data-hint="Солнце — яркость общего канала" data-default="0.75"></div>
               <div class="mixer__body"><div class="meter" data-meter="master"></div><div class="fader" data-param="mix.master" data-label="ОБЩИЙ" data-default="0.8"></div></div>
               <span class="mixer__name" data-sign="m">ОБЩИЙ</span>
             </div>

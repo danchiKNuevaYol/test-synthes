@@ -1,9 +1,6 @@
 // Блок .recorder — запись экспедиции: кнопка REC, таймер, старт/стоп/скачать, темп. (ОБЩИЙ и СОЛНЦЕ — в микшере.)
 // mountRecorder(el, store, actions) → { update(ui), tick(seconds) }; actions = { play, stop, toggleRec, save }.
-// РАСКАЧКА — горизонтальный ползунок .slider (data-param="swing"), его подключает этот модуль.
 // Все значки — инлайн SVG-контуры (символы вроде «⭳» в системных шрифтах нет). REC — окружность; запись — залитый круг.
-
-import { mountSlider } from './slider.js';
 
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const BPM = { min: 40, max: 200, step: 2 };
@@ -40,14 +37,12 @@ export function mountRecorder(el, store, actions) {
         <output class="recorder__bpm">78</output>
         <button type="button" class="recorder__step" data-bpm="1" aria-label="Темп быстрее">+</button>
       </div>
-      <div class="slider recorder__swing" data-param="swing" data-label="РАСКАЧКА" data-hint="Раскачка — сдвиг шестнадцатых" data-default="0.15"></div>
     </div>`;
 
   const q = (s) => el.querySelector(s);
   const rec = q('.recorder__rec'), time = q('.recorder__time'), status = q('.recorder__status');
   const play = q('[data-action="play"]'), stop = q('[data-action="stop"]'), save = q('[data-action="save"]');
   const bpm = q('.recorder__bpm');
-  const swing = mountSlider(q('.recorder__swing'), store);
 
   rec.addEventListener('click', () => actions.toggleRec());
   play.addEventListener('click', () => actions.play());
@@ -63,7 +58,7 @@ export function mountRecorder(el, store, actions) {
     });
   }));
 
-  function onState(state) { bpm.textContent = String(state.bpm); swing(state); }
+  function onState(state) { bpm.textContent = String(state.bpm); }
   store.subscribe(onState);
   onState(store.get());
 

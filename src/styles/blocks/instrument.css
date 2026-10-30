@@ -12,11 +12,10 @@
 .instrument__title .sign { width: 11px; height: 11px; vertical-align: 0; }
 
 /* Ряды модулей: ширины заданы так, чтобы вместе с зазорами уложиться в --instrument-w; тропа забирает остаток */
-.instrument__module--voice { flex: 0 0 208px; }
-.instrument__module--weather { flex: 0 0 208px; }
+.instrument__module--voice { flex: 0 0 218px; }
 .instrument__module--trail { flex: 1 1 0; }
-.instrument__module--mixer { flex: 0 0 284px; }
-.instrument__module--recorder { flex: 0 0 176px; }
+.instrument__module--mixer { flex: 0 0 210px; }
+.instrument__module--recorder { flex: 0 0 180px; }
 
-/* Ползунки голоса: четыре в столбик под переключателем волны, поровну по высоте */
+/* Ползунки голоса: три в столбик под переключателем волны, поровну по высоте */
 .instrument__sliders { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; min-width: 0; }

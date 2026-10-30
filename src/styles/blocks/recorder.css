@@ -30,7 +30,4 @@
 .recorder__step:hover { background: var(--ink); color: var(--paper); }
 .recorder__bpm { min-width: 2.4ch; text-align: center; font: 500 13px var(--font-mono); font-variant-numeric: tabular-nums; }
 
-/* РАСКАЧКА: горизонтальный ползунок под темпом */
-.recorder__swing { margin-top: 0; }
-
 @media (prefers-reduced-motion: reduce) { .recorder__rec.is-on .recorder__ring { animation: none; } }
