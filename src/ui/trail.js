@@ -61,7 +61,7 @@ export function mountTrail(el, store) {
     </div>`).join('');
 
   el.innerHTML = `
-    <h2 class="trail__title">${sign('p')}ТРОПА · 16 НАБЛЮДЕНИЙ</h2>
+    <h2 class="trail__title visually-hidden">${sign('p')}ТРОПА · 16 НАБЛЮДЕНИЙ</h2>
     <div class="trail__body">
       <div class="trail__labels">
         <span class="trail__num-spacer"></span>

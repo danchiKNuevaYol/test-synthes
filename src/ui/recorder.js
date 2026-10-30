@@ -16,7 +16,7 @@ const ICONS = {
 
 export function mountRecorder(el, store, actions) {
   el.innerHTML = `
-    <h2 class="recorder__title">РЕКОРДЕР · ЭКСПЕДИЦИЯ</h2>
+    <h2 class="recorder__title visually-hidden">РЕКОРДЕР · ЭКСПЕДИЦИЯ</h2>
     <div class="recorder__main">
       <button type="button" class="recorder__rec" aria-pressed="false" aria-label="Запись (R)" title="Запись — R">
         <svg viewBox="0 0 48 48" aria-hidden="true"><circle class="recorder__ring" cx="24" cy="24" r="22"/><circle class="recorder__core" cx="24" cy="24" r="13"/></svg>

@@ -16,7 +16,6 @@ import { sign } from './ui/signs.js';
 import { mountWeatherKit } from './ui/weather-kit.js';
 import { mountTrail } from './ui/trail.js';
 import { mountRecorder } from './ui/recorder.js';
-import { mountHintLine } from './ui/hint-line.js';
 import { degreeName } from './state/music.js';
 
 const $ = (s) => document.querySelector(s);
@@ -38,7 +37,6 @@ const faders = $$('.fader').map((el) => mountFader(el, store));
 const meters = $$('[data-meter]').map((el) => ({ id: el.dataset.meter, update: mountMeter(el) }));
 const weatherKit = mountWeatherKit($('.weather-kit'), store);   // ручки погоды рисует он сам (.knob внутри него)
 const trail = mountTrail($('.trail'), store);
-mountHintLine($('.hint-line'));
 // знаки каналов в заголовках модулей и подписях полос микшера (SVG, а не символы шрифта)
 $$('.instrument [data-sign]').forEach((el) => { if (!el.classList.contains('knob')) el.insertAdjacentHTML('afterbegin', sign(el.dataset.sign)); });
 

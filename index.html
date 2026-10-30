@@ -22,7 +22,7 @@
     <!-- Рисунок: мир занимает всё свободное место, поверх — название места и строка места -->
     <div class="stage__visual">
       <div class="world" aria-hidden="true"></div>
-      <header class="hud"></header>
+      <header class="hud visually-hidden"></header>
       <form class="place-bar" aria-label="Место и время"></form>
     </div>
 
@@ -32,7 +32,7 @@
 
         <!-- Голос A · ВОЗДУХ — сплошная линия, знак ○ -->
         <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-a">
-          <h2 class="instrument__title" id="t-voice-a" data-sign="a">ГОЛОС A · ВОЗДУХ</h2>
+          <h2 class="instrument__title visually-hidden" id="t-voice-a" data-sign="a">ГОЛОС A · ВОЗДУХ</h2>
           <div class="wave-switch" data-param="a.wave" data-channel="a"></div>
           <div class="instrument__knobs">
             <div class="knob" data-param="a.tune"  data-label="ВЫСОТА"    data-channel="a" data-format="hz-a" data-default="0.4"></div>
@@ -44,7 +44,7 @@
 
         <!-- Голос B · СТИХИЯ — двойная линия, знак ═ -->
         <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-b">
-          <h2 class="instrument__title" id="t-voice-b" data-sign="b">ГОЛОС B · СТИХИЯ</h2>
+          <h2 class="instrument__title visually-hidden" id="t-voice-b" data-sign="b">ГОЛОС B · СТИХИЯ</h2>
           <div class="wave-switch" data-param="b.wave" data-channel="b"></div>
           <div class="instrument__knobs">
             <div class="knob" data-param="b.tune"    data-label="ВЫСОТА" data-channel="b" data-format="hz-b" data-default="0.4"></div>
@@ -62,7 +62,7 @@
 
         <!-- Микшер: у каждого канала панорама, индикатор и фейдер; у общего вместо панорамы — СОЛНЦЕ (яркость) -->
         <section class="instrument__module instrument__module--mixer mixer" aria-labelledby="t-mixer">
-          <h2 class="instrument__title" id="t-mixer">МИКШЕР</h2>
+          <h2 class="instrument__title visually-hidden" id="t-mixer">МИКШЕР</h2>
           <div class="mixer__strips">
             <div class="mixer__strip">
               <div class="knob" data-param="pan.a" data-label="ПАН" data-channel="a" data-size="46" data-format="pan" data-hint="Панорама воздуха" data-default="0.5" data-bipolar></div>
@@ -93,8 +93,6 @@
       </section>
     </div>
 
-    <!-- Подсказка по клавишам -->
-    <footer class="hint-line"></footer>
   </main>
 
   <script type="module" src="./src/main.js"></script>

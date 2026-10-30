@@ -13,9 +13,10 @@ input { font: inherit; color: inherit; border-radius: 0; }
 /* Фокус везде один: тонкая пунктирная обводка */
 :focus-visible { outline: 1px dashed var(--ink); outline-offset: 3px; }
 
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
-  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+.visually-hidden {   /* скрыто с экрана, но доступно экранным чтецам; !important — чтобы стили блока не перебили */
+  position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important;
+  padding: 0 !important; overflow: hidden !important; clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important; border: 0 !important;
 }
 
 /* Строка места — бумага ~0.92, рамка 1px тушью, прямые углы, ни блюра, ни тени */

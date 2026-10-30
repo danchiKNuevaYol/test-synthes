@@ -34,7 +34,7 @@ export function mountWeatherKit(el, store) {
     </div>`).join('');
 
   el.innerHTML = `
-    <h2 class="weather-kit__title">ПОГОДА · ЦЕПЬ</h2>
+    <h2 class="weather-kit__title visually-hidden">ПОГОДА · ЦЕПЬ</h2>
     <div class="weather-kit__targets" role="radiogroup" aria-label="Чья цепочка эффектов">${seg}</div>
     <div class="weather-kit__chain">${chain}</div>`;
 
