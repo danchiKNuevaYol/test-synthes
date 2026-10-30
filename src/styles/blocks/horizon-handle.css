@@ -39,7 +39,7 @@
   display: flex; gap: 8px; align-items: baseline; white-space: nowrap; pointer-events: none;
   font-family: var(--font-ui); font-size: 10px; line-height: 1.2; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--ink); opacity: 0.55; transition: opacity 0.2s;
-  text-shadow: 0 0 8px var(--shadow), 0 0 2px var(--shadow);
+  text-shadow: 0 0 8px var(--glass-strong), 0 0 2px var(--glass);
 }
 .horizon-handle__name { font-weight: 600; }
 .horizon-handle__values { font-family: var(--font-mono); letter-spacing: 0.08em; }
