@@ -56,9 +56,9 @@ function buildTerrain(p, seed, W, H) {
   const cols = Math.ceil(W / STEP) + 2;
   // дальняя, средняя, ближняя: число линий, отступ подножия от горизонта, размах, частота, острота (доли высоты)
   const spec = [
-    { n: 6, off: 0.1, amp: 0.125, freq: 2.4, sharp: 0.5, gap: 0.0054 },
-    { n: 8, off: 0.052, amp: 0.1, freq: 3.6, sharp: 0.4, gap: 0.006 },
-    { n: 10, off: 0.016, amp: 0.078, freq: 5.4, sharp: 0.3, gap: 0.0066 },
+    { n: 6, off: 0.075, amp: 0.2, freq: 2.4, sharp: 0.5, gap: 0.0062 },
+    { n: 8, off: 0.042, amp: 0.16, freq: 3.6, sharp: 0.4, gap: 0.0068 },
+    { n: 10, off: 0.014, amp: 0.125, freq: 5.4, sharp: 0.3, gap: 0.0072 },
   ];
   const ridges = spec.map((L) => {
     const o = rnd() * 900, f = L.freq * (0.85 + rnd() * 0.4), amp = L.amp * (0.88 + rnd() * 0.3);
@@ -78,7 +78,7 @@ function buildTerrain(p, seed, W, H) {
   const planet = { u: 0.2 + rnd() * 0.55, v: 0.15 + rnd() * 0.1 };
   const cloudMix = Array.from({ length: 64 }, () => rnd());   // по ним у каждой строки облака свой край
 
-  const blades = Array.from({ length: Math.round(W / 6.5) }, () => ({ u: rnd(), d: Math.pow(rnd(), 0.85), h: 0.55 + rnd() * rnd() * 1.1, lean: (rnd() - 0.5) * 0.012, ph: rnd() * 6.28 }))
+  const blades = Array.from({ length: Math.round(W / 6.5) }, () => ({ u: rnd(), d: Math.pow(rnd(), 0.85), h: 0.55 + rnd() * rnd() * 1.1, lean: (rnd() - 0.5) * 0.03, ph: rnd() * 6.28 }))
     .sort((a, b) => a.d - b.d);
   const treesBack = Array.from({ length: 34 }, (_, i) => ({ u: (i + 0.15 + rnd() * 0.7) / 34, h: 0.035 + rnd() * 0.05, pick: rnd() }));
   const treesFront = [0.03, 0.085, 0.92, 0.975].map((u) => ({ u: u + (rnd() - 0.5) * 0.02, h: 0.26 + rnd() * 0.12 }));
@@ -186,9 +186,9 @@ function sketch(store, live, bridge, el) {
 
     // --- вспомогательное: линия-пунктир на «ДАЛЬ»; w — близость к горизонту 0…1
     function farStyle(g, alpha, w, far) {
-      const k = far * w;
-      g.strokeStyle = ink(alpha * (1 - 0.72 * k));
-      if (k > 0.12) g.setLineDash([Math.max(2, 14 * (1 - k)), 3 + 30 * k]); else g.setLineDash([]);
+      const k = clamp((far - 0.3) / 0.7) * w;                 // у типичной «дали» (~0.5) эффект едва заметен
+      g.strokeStyle = ink(alpha * (1 - 0.55 * k));
+      if (k > 0.4) g.setLineDash([Math.max(3, 16 * (1 - k)), 2 + 26 * (k - 0.35)]); else g.setLineDash([]);
     }
 
     // --- небо: горизонтальные линии, облако голоса A, звёзды, светила, чужая планета
@@ -218,7 +218,7 @@ function sketch(store, live, bridge, el) {
         let pen = false;
         for (let x = -8; x <= W + 8; x += (nearCloud && Math.abs(x - cx) < 2.8 * R) ? 2.5 : 8) {
           let px = x, py = y0 + Math.sin(x * 0.0042 + y0 * 0.011 + clock * 0.45 + rowIdx * 0.3) * wind;
-          if (rough) py += (Math.sin(x * 0.031 + rowIdx * 1.7 + clock * 3.1) * Math.sin(x * 0.011 - rowIdx * 0.9 + clock * 1.3)) * 5 * rough;
+          if (rough) py += (Math.sin(x * 0.031 + rowIdx * 1.7 + clock * 3.1) * Math.sin(x * 0.011 - rowIdx * 0.9 + clock * 1.3)) * 3.4 * rough;
           if (alien) {
             const ddx = x - plx, ddy = y0 - ply;
             if (ddx * ddx + ddy * ddy < hole * hole) { pen = false; continue; }   // внутри «планеты» линии уступают место кольцам
@@ -275,10 +275,11 @@ function sketch(store, live, bridge, el) {
       }
 
       // звёзды — крошечные крестики на пустом месте (линии вокруг них стёрты)
-      if (hatch.stars > 0.02) {
+      if (hatch.stars > 0.3) {
         for (const s of terrain.stars) {
           const sy = s.v * H;
           if (sy > lastY - 6) continue;
+          if (Math.hypot(s.u * W - cx, sy - cy) < 2.5 * R) continue;
           if (alien && Math.hypot(s.u * W - plx, sy - ply) < hole * 1.05) continue;
           const tw = 0.5 + 0.5 * Math.sin(clock * s.sp + s.ph);
           const al = clamp(hatch.stars * (0.55 + 0.45 * tw) * (1 - s.v * 0.5));
@@ -340,7 +341,7 @@ function sketch(store, live, bridge, el) {
     // Рисуем от дальней к ближней, каждая линия закрашивает бумагой всё под собой.
     function drawRidges(S) {
       const { hy, far } = S, g = ctx(), cols = terrain.cols;
-      const wInt = [0.55, 0.78, 1];
+      const wInt = [0.62, 0.82, 1];
       g.lineJoin = 'round';
       terrain.ridges.forEach((r, ri) => {
         const foot = hy - r.off * H, gp = r.gap * H, last = r.n - 1;
@@ -370,7 +371,7 @@ function sketch(store, live, bridge, el) {
           }
           const main = i === 0;
           g.lineWidth = main ? MAIN : HAIR;
-          farStyle(g, (main ? 1 : 0.62) * wInt[ri], clamp(1 - (r.off * H * 0.6 + (hy - flat) * 0.3) / (0.2 * H)) * 0.0 + (ri === 2 ? 0.4 : ri === 1 ? 0.75 : 1), far);
+          farStyle(g, (main ? 1 : 0.72) * wInt[ri], [1, 0.5, 0.15][ri], far);
           g.stroke();
         }
       });
@@ -404,8 +405,8 @@ function sketch(store, live, bridge, el) {
       const { hy } = S, g = ctx(), L = H - hy, sH = H / 900;
       const hills = terrain.hills, cols = terrain.cols;
       const rows = [];
-      let c = 5.5 * sH, step = 3.1 * sH;
-      while (c < L + step * 2) { rows.push(c); c += step; step *= 1.068; }
+      let c = 9 * sH, step = 3.4 * sH;
+      while (c < L + step * 2) { rows.push(c); c += step; step *= 1.07; }
       const n = rows.length;
       g.lineJoin = 'round';
       for (let k = 0; k < n; k++) {
@@ -436,7 +437,7 @@ function sketch(store, live, bridge, el) {
         }
         const edge = k % 6 === 5;                                          // каждая шестая линия — межа поля
         g.lineWidth = edge ? MAIN : HAIR;
-        g.strokeStyle = ink((edge ? 0.78 : 0.3 + 0.38 * t) * fade);
+        g.strokeStyle = ink((edge ? 0.78 : 0.14 + 0.5 * t) * fade);
         g.stroke();
       }
     }
@@ -452,7 +453,7 @@ function sketch(store, live, bridge, el) {
         const b = list[i], x = b.u * W, y = yG + b.d * (H * 1.01 - yG);
         const hgt = (0.014 + 0.05 * b.d) * H * b.h;
         const tip = b.lean * H + S.sway(x, b.ph) * hgt * 0.9;
-        g.moveTo(x, y); g.quadraticCurveTo(x + tip * 0.25, y - hgt * 0.55, x + tip, y - hgt);
+        g.moveTo(x, y); g.quadraticCurveTo(x + tip * 0.08, y - hgt * 0.6, x + tip, y - hgt);
       }
       g.stroke();
     }

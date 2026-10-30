@@ -15,38 +15,87 @@
   <link rel="stylesheet" href="./src/styles/index.css">
 </head>
 <body>
-  <!-- Каркас. Каждый блок рисует своё содержимое сам: модуль src/ui/<блок>.js, стили blocks/<блок>.css -->
+  <!-- Каркас. Сверху — рисунок (мир из линий), снизу — компактный чёрно-белый прибор, лежащий под рисунком.
+       Каждый блок рисует своё содержимое сам: модуль src/ui/<блок>.js, стили blocks/<блок>.css -->
+  <main class="stage" aria-label="Experimental Sound Synthesizer">
 
-  <!-- Мир: пейзаж места на весь экран (p5) -->
-  <div class="world" aria-hidden="true"></div>
+    <!-- Рисунок: мир занимает всё свободное место, поверх — название места и строка места -->
+    <div class="stage__visual">
+      <div class="world" aria-hidden="true"></div>
+      <header class="hud"></header>
+      <form class="place-bar" aria-label="Место и время"></form>
+    </div>
 
-  <!-- Ручки внутри мира: облако — голос A, горизонт — голос B -->
-  <div class="sky-handle"></div>
-  <div class="horizon-handle"></div>
+    <!-- Прибор: рисуется в фиксированном размере и целиком масштабируется под ширину окна (см. main.js → fit) -->
+    <div class="stage__dock">
+      <section class="instrument" aria-label="Прибор">
 
-  <!-- Название места и время -->
-  <header class="hud"></header>
+        <!-- Голос A · ВОЗДУХ — сплошная линия, знак ○ -->
+        <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-a">
+          <h2 class="instrument__title" id="t-voice-a" data-sign="a">ГОЛОС A · ВОЗДУХ</h2>
+          <div class="wave-switch" data-param="a.wave" data-channel="a"></div>
+          <div class="instrument__knobs">
+            <div class="knob" data-param="a.tune"  data-label="ВЫСОТА"    data-channel="a" data-format="hz-a" data-default="0.4"></div>
+            <div class="knob" data-param="a.shape" data-label="ПЛОТНОСТЬ" data-channel="a" data-default="0.4"></div>
+            <div class="knob" data-param="a.mod"   data-label="ПОРЫВЫ"    data-channel="a" data-default="0.4"></div>
+            <div class="knob" data-param="a.level" data-label="СИЛА"      data-channel="a" data-default="0.7"></div>
+          </div>
+        </section>
 
-  <!-- Куда отправимся: место и время, места-пресеты, ссылка -->
-  <form class="place-bar" aria-label="Место и время"></form>
+        <!-- Голос B · СТИХИЯ — двойная линия, знак ═ -->
+        <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-b">
+          <h2 class="instrument__title" id="t-voice-b" data-sign="b">ГОЛОС B · СТИХИЯ</h2>
+          <div class="wave-switch" data-param="b.wave" data-channel="b"></div>
+          <div class="instrument__knobs">
+            <div class="knob" data-param="b.tune"    data-label="ВЫСОТА" data-channel="b" data-format="hz-b" data-default="0.4"></div>
+            <div class="knob" data-param="b.texture" data-label="ЗЕРНО"  data-channel="b" data-default="0.4"></div>
+            <div class="knob" data-param="b.mod"     data-label="ДРОЖЬ"  data-channel="b" data-default="0.4"></div>
+            <div class="knob" data-param="b.level"   data-label="СИЛА"   data-channel="b" data-default="0.7"></div>
+          </div>
+        </section>
 
-  <!-- Лист наблюдения: точные настройки выбранного голоса (открывается по клику на облако или горизонт) -->
-  <aside class="sheet" hidden></aside>
+        <!-- Погода: цепочка эффектов выбранного канала — ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ -->
+        <section class="instrument__module instrument__module--weather weather-kit" aria-label="Погода — цепочка эффектов"></section>
 
-  <!-- Погода: цепочка эффектов выбранного канала — ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ -->
-  <section class="weather-kit" aria-label="Погода — цепочка эффектов"></section>
+        <!-- Тропа: 16 наблюдений частиц -->
+        <section class="instrument__module instrument__module--trail trail" aria-label="Тропа — 16 наблюдений частиц"></section>
 
-  <!-- План местности: каналы как источники вокруг слушателя (расстояние — громкость, сторона — панорама) -->
-  <section class="field-map" aria-label="План местности — каналы"></section>
+        <!-- Микшер: у каждого канала панорама, индикатор и фейдер; у общего вместо панорамы — СОЛНЦЕ (яркость) -->
+        <section class="instrument__module instrument__module--mixer mixer" aria-labelledby="t-mixer">
+          <h2 class="instrument__title" id="t-mixer">МИКШЕР</h2>
+          <div class="mixer__strips">
+            <div class="mixer__strip">
+              <div class="knob" data-param="pan.a" data-label="ПАН" data-channel="a" data-size="46" data-format="pan" data-hint="Панорама воздуха" data-default="0.5" data-bipolar></div>
+              <div class="mixer__body"><div class="meter" data-meter="a"></div><div class="fader" data-param="mix.a" data-label="A" data-channel="a" data-default="0.7"></div></div>
+              <span class="mixer__name" data-sign="a">A</span>
+            </div>
+            <div class="mixer__strip">
+              <div class="knob" data-param="pan.b" data-label="ПАН" data-channel="b" data-size="46" data-format="pan" data-hint="Панорама стихии" data-default="0.5" data-bipolar></div>
+              <div class="mixer__body"><div class="meter" data-meter="b"></div><div class="fader" data-param="mix.b" data-label="B" data-channel="b" data-default="0.7"></div></div>
+              <span class="mixer__name" data-sign="b">B</span>
+            </div>
+            <div class="mixer__strip">
+              <div class="knob" data-param="pan.p" data-label="ПАН" data-channel="p" data-size="46" data-format="pan" data-hint="Панорама частиц" data-default="0.5" data-bipolar></div>
+              <div class="mixer__body"><div class="meter" data-meter="p"></div><div class="fader" data-param="mix.p" data-label="Ч" data-channel="p" data-default="0.7"></div></div>
+              <span class="mixer__name" data-sign="p">Ч</span>
+            </div>
+            <div class="mixer__strip mixer__strip--master">
+              <div class="knob" data-param="tone" data-label="СОЛНЦЕ" data-size="46" data-hint="Солнце — яркость общего канала" data-default="0.75"></div>
+              <div class="mixer__body"><div class="meter" data-meter="master"></div><div class="fader" data-param="mix.master" data-label="ОБЩИЙ" data-default="0.8"></div></div>
+              <span class="mixer__name" data-sign="m">ОБЩИЙ</span>
+            </div>
+          </div>
+        </section>
 
-  <!-- Тропа: 16 наблюдений, частицы -->
-  <section class="trail" aria-label="Тропа — 16 наблюдений частиц"></section>
+        <!-- Рекордер: запись экспедиции, старт и стоп, темп -->
+        <section class="instrument__module instrument__module--recorder recorder" aria-label="Рекордер"></section>
 
-  <!-- Рекордер: запись экспедиции, старт и стоп, темп, общий уровень -->
-  <section class="recorder" aria-label="Рекордер"></section>
+      </section>
+    </div>
 
-  <!-- Подсказка по клавишам -->
-  <footer class="hint-line"></footer>
+    <!-- Подсказка по клавишам -->
+    <footer class="hint-line"></footer>
+  </main>
 
   <script type="module" src="./src/main.js"></script>
 </body>

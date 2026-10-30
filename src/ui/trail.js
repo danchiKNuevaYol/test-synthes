@@ -2,6 +2,7 @@
 // справа — случайный узор, сдвиг влево/вправо, стереть. Пометки чёрной тушью: ни цвета, ни заливок.
 
 import { TRACKS } from '../state/scenes.js';
+import { sign } from './signs.js';
 
 // Значки частиц (viewBox 16×16), всё контуром тушью: капля — штрих с точкой, щелчок — точка,
 // треск — звёздочка из 3 штрихов, раскат — зигзаг
@@ -29,7 +30,7 @@ export function mountTrail(el, store) {
     </div>`).join('');
 
   el.innerHTML = `
-    <h2 class="trail__title">ТРОПА · 16 НАБЛЮДЕНИЙ</h2>
+    <h2 class="trail__title">${sign('p')}ТРОПА · 16 НАБЛЮДЕНИЙ</h2>
     <div class="trail__body">
       <div class="trail__labels">
         <span class="trail__num-spacer"></span>

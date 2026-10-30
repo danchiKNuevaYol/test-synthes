@@ -1,8 +1,6 @@
-// Блок .recorder — запись экспедиции: кнопка REC, таймер, старт/стоп/скачать, темп, ОБЩИЙ и СОЛНЦЕ.
+// Блок .recorder — запись экспедиции: кнопка REC, таймер, старт/стоп/скачать, темп. (ОБЩИЙ и СОЛНЦЕ — в микшере.)
 // mountRecorder(el, store, actions) → { update(ui), tick(seconds) }; actions = { play, stop, toggleRec, save }.
 // Все значки — инлайн SVG-контуры (символы вроде «⭳» в системных шрифтах нет). REC — окружность; запись — залитый круг.
-
-import { mountSlider } from './slider.js';
 
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const BPM = { min: 40, max: 200, step: 2 };
@@ -39,10 +37,6 @@ export function mountRecorder(el, store, actions) {
         <output class="recorder__bpm">78</output>
         <button type="button" class="recorder__step" data-bpm="1" aria-label="Темп быстрее">+</button>
       </div>
-    </div>
-    <div class="recorder__sliders">
-      <div class="slider" data-param="mix.master" data-label="ОБЩИЙ" data-sign="m" data-default="0.8"></div>
-      <div class="slider" data-param="tone" data-label="СОЛНЦЕ" data-default="0.75"></div>
     </div>`;
 
   const q = (s) => el.querySelector(s);
@@ -64,12 +58,7 @@ export function mountRecorder(el, store, actions) {
     });
   }));
 
-  // ползунки рисует slider.js; значения берут из хранилища
-  const sliders = [...el.querySelectorAll('.slider')].map((s) => mountSlider(s, store));
-  function onState(state) {
-    bpm.textContent = String(state.bpm);
-    sliders.forEach((u) => u?.(state));
-  }
+  function onState(state) { bpm.textContent = String(state.bpm); }
   store.subscribe(onState);
   onState(store.get());
 
