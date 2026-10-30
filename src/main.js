@@ -38,6 +38,15 @@ const trail = mountTrail($('.trail'), store);
 const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });
 mountHintLine($('.hint-line'));
 
+// --- нижняя кромка .hud в пикселях: по ней лист наблюдения (CSS-переменная --hud-bottom) узнаёт, докуда ему расти вверх
+function syncHudBottom() {
+  const bottom = Math.ceil($('.hud').getBoundingClientRect().bottom);
+  document.documentElement.style.setProperty('--hud-bottom', `${bottom}px`);
+}
+// ResizeObserver ловит смену места, подсказки при простое и перенос строк; resize — на случай смены окна
+if (typeof ResizeObserver === 'function') new ResizeObserver(syncHudBottom).observe($('.hud'));
+window.addEventListener('resize', syncHudBottom);
+
 // --- тема времени суток: CSS-переменные на <html> при смене времени или погоды
 let themeKey = '';
 function applyTheme(place) {
@@ -54,6 +63,7 @@ function render(state) {
   applyTheme(state.place);
   views.forEach((update) => update(state));
   hud(state, live);
+  syncHudBottom();
   engine.apply(state);
 }
 store.subscribe(render);
@@ -70,6 +80,7 @@ function setUi(patch) {
   if (!transport.playing) { live.step = -1; trail.setStep(-1); }
   recorder.update(transport);
   hud(live.state, live);
+  syncHudBottom();   // подсказка в .hud появляется только при простое
 }
 setUi({});
 

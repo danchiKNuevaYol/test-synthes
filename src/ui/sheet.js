@@ -69,6 +69,7 @@ export function mountSheet(el, store) {
     voice = v;
     render(v);
     el.hidden = false;
+    document.body.classList.add('is-sheet-open');   // план местности уступает место листу
     if (reduced()) el.classList.add('is-open');
     else {
       el.classList.remove('is-open');
@@ -82,6 +83,7 @@ export function mountSheet(el, store) {
     if (!opened) return;
     opened = false;
     voice = null;
+    document.body.classList.remove('is-sheet-open');
     el.classList.remove('is-open');
     const hide = () => { if (!opened) { el.hidden = true; updates = []; } };
     if (reduced()) hide();
