@@ -29,7 +29,7 @@ export function mountWeatherKit(el, store) {
     <button type="button" class="weather-kit__target weather-kit__target--${t.id}" role="radio" data-target="${t.id}" aria-checked="false">${sign(t.id)}<span>${t.name}</span></button>`).join('');
   const chain = STAGES.map((st, i) => `
     <div class="weather-kit__stage">
-      <div class="knob" data-param="fx.*.${st.param}" data-label="${i + 1} ${st.name}" data-default="${st.def}" data-channel="*" data-size="60"></div>
+      <div class="knob" data-param="fx.*.${st.param}" data-label="${i + 1} ${st.name}" data-default="${st.def}" data-channel="*"></div>
       ${i % 2 === 0 ? `<span class="weather-kit__arrow">${ARROW}</span>` : ''}
     </div>`).join('');
 

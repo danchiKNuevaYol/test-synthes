@@ -1,22 +1,17 @@
-/* .weather-kit — ПОГОДА: цепочка эффектов выбранного канала, четыре ступени сверху вниз */
-.weather-kit { position: fixed; right: 2.5vw; top: 22vh; width: 220px; padding: 12px 14px 12px;
-  display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+/* .weather-kit — ПОГОДА: цепочка эффектов выбранного канала. Вкладки канала и четыре ручки по порядку цепи
+   (ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ) в сетке два на два; тип линии дуги — по выбранному каналу. */
 
-/* Переключатель канала: знак + слово; выбранный — инверсия */
+/* Вкладки канала: знак + слово; выбранная — инверсия */
 .weather-kit__targets { display: flex; justify-content: space-between; gap: 2px; }
-.weather-kit__target { display: inline-flex; align-items: center; gap: 4px; padding: 4px 5px; border: 1px solid transparent; border-radius: 0; background: none; color: var(--ink);
-  font: 500 9px/1.2 var(--font-mono); letter-spacing: 0.1em; white-space: nowrap; }
+.weather-kit__target { display: inline-flex; align-items: center; gap: 4px; padding: 4px 4px; border: 1px solid transparent; border-radius: 0; background: none; color: var(--ink);
+  font: 500 9px/1.2 var(--font-mono); letter-spacing: 0.06em; white-space: nowrap; }
 .weather-kit__target .sign { width: 9px; height: 9px; vertical-align: 0; }
 .weather-kit__target:hover { border-color: var(--ink); }
 .weather-kit__target.is-on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .weather-kit__target:focus-visible { outline-offset: 2px; }
 
-/* Цепочка: значок слева, ползунок справа; между ступенями — тонкая стрелка */
-.weather-kit__chain { display: flex; flex-direction: column; }
-.weather-kit__stage { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 0 10px; align-items: center; }
-.weather-kit__icon { position: relative; width: 26px; height: 26px; display: grid; place-items: center; color: var(--ink); border: 1px solid var(--ink); }
-.weather-kit__icon svg { width: 18px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
-.weather-kit__n { position: absolute; left: -10px; top: 50%; margin-top: -4px; font: 400 8px/1 var(--font-mono); font-style: normal; color: var(--ink-soft); }
-.weather-kit__arrow { width: 26px; height: 11px; display: grid; place-items: center; color: var(--ink-soft); }
-.weather-kit__arrow svg { width: 12px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
-.weather-kit .slider__track { margin-top: 0; height: 18px; }
+/* Цепь: ступени идут слева направо и сверху вниз, между первой и второй, третьей и четвёртой — стрелка */
+.weather-kit__chain { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; align-content: space-between; gap: 6px 4px; }
+.weather-kit__stage { position: relative; display: flex; justify-content: center; }
+.weather-kit__arrow { position: absolute; right: -8px; top: 24px; width: 12px; height: 10px; color: var(--ink); background: var(--paper); display: grid; place-items: center; z-index: 1; }
+.weather-kit__arrow svg { width: 12px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }

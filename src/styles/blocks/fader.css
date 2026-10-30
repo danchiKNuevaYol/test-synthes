@@ -1,0 +1,26 @@
+/* .fader — вертикальный фейдер: волосяная дорожка, засечки и квадратный бегунок в рамке 1px.
+   Заливка под бегунком — тип линии канала: A сплошная, B двойная, Ч пунктир. */
+.fader { --v: 0; --thumb: 14px; display: block; color: var(--ink); }
+.fader__track { position: relative; width: 30px; height: 100%; cursor: pointer; touch-action: none; outline: none; }
+.fader__track:focus-visible { outline: 1px dashed var(--ink); outline-offset: 2px; }
+.fader.is-drag .fader__track { cursor: grabbing; }
+
+.fader__rail { position: absolute; left: 50%; top: calc(var(--thumb) / 2); bottom: calc(var(--thumb) / 2); width: 1px; margin-left: -0.5px; background: var(--ink-faint); }
+.fader__fill { position: absolute; left: 50%; bottom: 0; width: 2px; margin-left: -1px; height: calc(100% * var(--v)); background: var(--ink); }
+.fader--b .fader__fill { width: 5px; margin-left: -2.5px;
+  background: linear-gradient(var(--ink), var(--ink)) left / 1px 100% no-repeat, linear-gradient(var(--ink), var(--ink)) right / 1px 100% no-repeat; }
+.fader--p .fader__fill { width: 4px; margin-left: -2px;
+  background: radial-gradient(circle at 50% 50%, var(--ink) 0.95px, transparent 1.25px) center bottom / 4px 4px repeat-y; }
+
+/* засечки по обе стороны дорожки: 5 штук, от верха до низа */
+.fader__ticks { position: absolute; left: 0; right: 0; top: calc(var(--thumb) / 2); bottom: calc(var(--thumb) / 2);
+  display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+.fader__ticks i { display: block; height: 1px; margin: 0 auto; width: 100%;
+  background: linear-gradient(90deg, var(--ink-soft) 0 3px, transparent 3px calc(100% - 3px), var(--ink-soft) calc(100% - 3px)); }
+
+/* бегунок: пустой квадрат в рамке 1px с чертой посередине; при наведении и перетаскивании — инверсия */
+.fader__thumb { position: absolute; left: 50%; width: var(--thumb); height: var(--thumb); margin-left: calc(var(--thumb) / -2);
+  bottom: calc((100% - var(--thumb)) * var(--v)); background: var(--paper); border: 1px solid var(--ink); pointer-events: none; }
+.fader__thumb::after { content: ''; position: absolute; left: 2px; right: 2px; top: 50%; height: 1px; margin-top: -0.5px; background: var(--ink); }
+.fader__track:hover .fader__thumb, .fader.is-drag .fader__thumb { background: var(--ink); }
+.fader__track:hover .fader__thumb::after, .fader.is-drag .fader__thumb::after { background: var(--paper); }

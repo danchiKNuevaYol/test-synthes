@@ -1,13 +1,13 @@
-/* .hud — название места поверх неба, слева сверху. Без плашки: тушь на бумажном ореоле, чтобы читалось над ночной штриховкой */
+/* .hud — название места поверх рисунка, слева сверху. Без плашки: тушь на бумажном ореоле, чтобы читалось над ночной штриховкой */
 .hud {
   --halo: 0 0 2px var(--paper), 0 0 6px var(--paper), 0 0 12px var(--paper), 0 0 22px var(--paper);
-  position: fixed; left: 2.5vw; top: 3.5vh; z-index: 5; width: 40vw; max-width: 40vw;
+  position: absolute; left: 2.5%; top: 18px; z-index: 5; width: 40%; max-width: 40%;
   color: var(--ink); text-shadow: var(--halo);
   pointer-events: none;
 }
 .hud > * { margin: 0; }
 .hud__overline { font: 500 10px/1.5 var(--font-mono); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--ink-soft); max-width: 34em; }
-.hud__place { margin-top: 10px; font: 500 clamp(34px, 4.2vw, 64px)/1 var(--font-display); letter-spacing: -0.005em; overflow-wrap: anywhere; }
+.hud__place { margin-top: 10px; font: 500 clamp(30px, 4.2vw, 64px)/1 var(--font-display); letter-spacing: -0.005em; overflow-wrap: anywhere; }
 .hud__meta { margin-top: 12px; font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; white-space: nowrap; }
 .hud__hint {
   display: inline-block; margin-top: 14px; padding: 4px 8px; border: 1px solid var(--ink); background: var(--panel); text-shadow: none;

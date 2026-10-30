@@ -1,0 +1,18 @@
+/* .stage — экран целиком: сверху рисунок (мир), снизу прибор, лежащий под ним, ещё ниже строка клавиш.
+   Прибор рисуется в фиксированном размере и масштабируется коэффициентом --k (его считает main.js → fit),
+   поэтому при любой ширине окна он помещается целиком, а рисунку остаётся всё свободное место. */
+:root {
+  --instrument-w: 1500px;   /* размер прибора «на чертеже» */
+  --instrument-h: 316px;
+  --k: 1;                   /* масштаб прибора, ставит main.js */
+}
+
+.stage { height: 100vh; height: 100dvh; display: grid; grid-template-rows: minmax(0, 1fr) auto auto; overflow: hidden; background: var(--paper); }
+
+/* Рисунок: мир заполняет область, название места и строка места лежат поверх него */
+.stage__visual { position: relative; min-height: 40vh; overflow: hidden; border-bottom: 1px solid var(--ink); }
+.stage__visual > .world { position: absolute; inset: 0; z-index: 0; }
+
+/* Место под прибор: размер = размер чертежа × k, по центру; сам прибор масштабируется от левого верхнего угла */
+.stage__dock { position: relative; margin: 10px auto 0; width: calc(var(--instrument-w) * var(--k)); height: calc(var(--instrument-h) * var(--k)); }
+.stage__dock > .instrument { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(var(--k)); }

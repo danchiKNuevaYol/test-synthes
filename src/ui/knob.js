@@ -2,7 +2,7 @@
 // Разметка: <div class="knob" data-param="a.tune" data-label="ВЫСОТА" data-channel="a" data-default="0.4"></div>
 //   data-param   — путь параметра в состоянии ('*' — текущая цепочка эффектов)
 //   data-channel — тип линии дуги: a — сплошная 2px, b — двойная, p — пунктир, * — как у текущей цепочки; без него — сплошная 1.25px
-//   data-size    — диаметр в px (по умолчанию 60); data-default — значение по двойному клику
+//   data-size    — диаметр в px (по умолчанию из CSS, 60); data-default — значение по двойному клику
 //   data-format, data-hint — формат значения и подсказка; data-bipolar — дуга растёт от середины (панорама)
 //   data-sign    — знак канала перед подписью: a | b | p | m
 //
@@ -37,7 +37,7 @@ export function mountKnob(el, store) {
   const def = d.default != null ? Number(d.default) : 0.5;
   const bipolar = d.bipolar != null;
   const name = d.hint || d.label || '';
-  el.style.setProperty('--knob-size', `${d.size || 60}px`);
+  if (d.size) el.style.setProperty('--knob-size', `${d.size}px`);   // без data-size размер задаёт CSS
 
   // Радиусы: кольцо 21, дуга A — 26, B — две дуги 25 и 28, Ч — 26.5; фоновая дорожка — волосяная
   const [t0x, t0y] = at(START, 24), [t0x2, t0y2] = at(START, 30);

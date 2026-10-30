@@ -1,0 +1,4 @@
+/* .meter — индикатор уровня: столбик маленьких квадратов-контуров; горящие залиты тушью */
+.meter { display: flex; flex-direction: column; justify-content: space-between; width: 6px; height: 100%; }
+.meter__cell { display: block; flex: none; width: 6px; height: 6px; border: 1px solid var(--ink-soft); background: transparent; }
+.meter__cell.is-on { background: var(--ink); border-color: var(--ink); }

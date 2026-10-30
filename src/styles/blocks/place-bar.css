@@ -1,7 +1,7 @@
 /* .place-bar — строка места справа сверху: поле с подчёркиванием, текстовые кнопки, места-пресеты (активное — инверсия).
    Первая строка: поле, «НАСТРОИТЬ», «ССЫЛКА». Вторая: места-пресеты. */
 .place-bar {
-  position: fixed; top: 3.5vh; right: 2.5vw; z-index: 6; width: 52vw; max-width: 600px; margin: 0;
+  position: absolute; top: 18px; right: 2.5%; z-index: 6; width: 52%; max-width: 600px; margin: 0;
   display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 14px;
   padding: 8px 14px 9px;
 }

@@ -1,0 +1,10 @@
+/* .mixer — четыре полосы: A ○, B ═, Ч ⁘ и ОБЩИЙ □. В каждой сверху ручка (панорама; у общего — СОЛНЦЕ),
+   в середине индикатор уровня рядом с фейдером, внизу знак и название канала. */
+.mixer__strips { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+.mixer__strip { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; padding: 0 2px; }
+.mixer__strip + .mixer__strip { border-left: 1px solid var(--hair); }
+.mixer__body { flex: 1; min-height: 0; display: flex; align-items: stretch; justify-content: center; gap: 2px; }
+.mixer__body .fader { height: 100%; }
+.mixer__body .meter { margin: 7px 0; height: auto; }
+.mixer__name { display: inline-flex; align-items: center; gap: 4px; font: 500 10px/1.2 var(--font-mono); letter-spacing: 0.1em; white-space: nowrap; }
+.mixer__name .sign { width: 10px; height: 10px; vertical-align: 0; }

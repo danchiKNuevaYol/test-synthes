@@ -1,0 +1,23 @@
+/* .instrument — прибор под рисунком: ряд модулей на бумаге, как технический чертёж портативного устройства.
+   Внешняя рамка 1px тушью и тонкая линейка под верхней кромкой; модули — рамка 1px, прямые углы, зазоры между ними. */
+.instrument {
+  width: var(--instrument-w); height: var(--instrument-h);
+  display: flex; gap: 8px; padding: 10px; min-width: 0;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--ink);
+  box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--ink-faint);   /* вторая, бледная линия рамки */
+}
+
+.instrument__module { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 10px 12px 11px;
+  background: var(--paper); border: 1px solid var(--ink); border-radius: 0; box-shadow: none; }
+.instrument__title .sign { width: 11px; height: 11px; vertical-align: 0; }
+
+/* Ряды модулей: ширины заданы так, чтобы вместе с зазорами уложиться в --instrument-w; тропа забирает остаток */
+.instrument__module--voice { flex: 0 0 208px; }
+.instrument__module--weather { flex: 0 0 208px; }
+.instrument__module--trail { flex: 1 1 0; }
+.instrument__module--mixer { flex: 0 0 240px; }
+.instrument__module--recorder { flex: 0 0 176px; }
+
+/* Ручки голоса: два на два, подписи под ручками */
+.instrument__knobs { flex: 1; display: grid; grid-template-columns: 1fr 1fr; align-content: space-between; gap: 6px 4px; justify-items: center; }
+.instrument__knobs .knob, .weather-kit .knob { --knob-size: 72px; }
