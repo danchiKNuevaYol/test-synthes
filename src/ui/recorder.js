@@ -1,5 +1,6 @@
 // Блок .recorder — запись экспедиции: кнопка REC, таймер, старт/стоп/скачать, темп. (ОБЩИЙ и СОЛНЦЕ — в микшере.)
 // mountRecorder(el, store, actions) → { update(ui), tick(seconds) }; actions = { play, stop, toggleRec, save }.
+// РАСКАЧКА — ручка .knob (data-param="swing"), её подключает main.js вместе с остальными ручками.
 // Все значки — инлайн SVG-контуры (символы вроде «⭳» в системных шрифтах нет). REC — окружность; запись — залитый круг.
 
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
@@ -37,6 +38,7 @@ export function mountRecorder(el, store, actions) {
         <output class="recorder__bpm">78</output>
         <button type="button" class="recorder__step" data-bpm="1" aria-label="Темп быстрее">+</button>
       </div>
+      <div class="knob recorder__swing" data-param="swing" data-label="РАСКАЧКА" data-size="46" data-hint="Раскачка — сдвиг шестнадцатых" data-default="0.15"></div>
     </div>`;
 
   const q = (s) => el.querySelector(s);

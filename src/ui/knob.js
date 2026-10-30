@@ -110,7 +110,8 @@ export function mountKnob(el, store) {
   });
 
   return function update(state) {
-    value = readParam(state, d.param);
+    const raw = readParam(state, d.param);
+    value = Number.isFinite(raw) ? raw : def;                  // параметра может не быть в состоянии — тогда значение по умолчанию
     const angle = START + SWEEP * value;
     pointer.setAttribute('transform', `rotate(${f(angle)})`);
     const mid = START + SWEEP / 2;

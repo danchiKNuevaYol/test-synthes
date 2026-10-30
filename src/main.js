@@ -17,6 +17,7 @@ import { mountWeatherKit } from './ui/weather-kit.js';
 import { mountTrail } from './ui/trail.js';
 import { mountRecorder } from './ui/recorder.js';
 import { mountHintLine } from './ui/hint-line.js';
+import { degreeName } from './state/music.js';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -30,13 +31,13 @@ const live = { state: store.get(), step: -1, playing: false, recording: false };
 const world = mountWorld($('.world'), store, live);
 const hud = mountHud($('.hud'));
 const placeBar = mountPlaceBar($('.place-bar'), store);
+const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });   // раньше ручек: в нём живёт ручка РАСКАЧКА
 const waveSwitches = $$('.wave-switch[data-param]').map((el) => mountWaveSwitch(el, store));
 const knobs = $$('.knob').map((el) => mountKnob(el, store));
 const faders = $$('.fader').map((el) => mountFader(el, store));
 const meters = $$('[data-meter]').map((el) => ({ id: el.dataset.meter, update: mountMeter(el) }));
 const weatherKit = mountWeatherKit($('.weather-kit'), store);   // ручки погоды рисует он сам (.knob внутри него)
 const trail = mountTrail($('.trail'), store);
-const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });
 mountHintLine($('.hint-line'));
 // знаки каналов в заголовках модулей и подписях полос микшера (SVG, а не символы шрифта)
 $$('.instrument [data-sign]').forEach((el) => { if (!el.classList.contains('knob')) el.insertAdjacentHTML('afterbegin', sign(el.dataset.sign)); });
@@ -73,6 +74,14 @@ function render(state) {
 }
 store.subscribe(render);
 render(store.get());
+
+// сыгранная нота (по мелодии или с клавиш) на мгновение появляется в строке места
+const DEFAULT_KEY = { root: 9, scale: 'minor' };
+if (typeof engine.onNote === 'function') {
+  engine.onNote((n) => hud.flash(degreeName(live.state.key || DEFAULT_KEY, n.degree)));
+}
+// для проверок: движок доступен в консоли только при ?debug в адресе
+if (/[?&]debug\b/.test(location.search)) window.__engine = engine;
 
 engine.onStep((i) => { live.step = i; trail.setStep(i); hud(live.state, live); });
 
@@ -136,6 +145,8 @@ function save() {
 
 // --- горячие клавиши для живого исполнения
 const FX_KEYS = { KeyQ: 'a', KeyW: 'b', KeyE: 'p' };
+// живая игра: нижний ряд клавиш — ступени лада 0…7 голосом B (по e.code, поэтому работает и в русской раскладке)
+const NOTE_KEYS = { KeyZ: 0, KeyX: 1, KeyC: 2, KeyV: 3, KeyB: 4, KeyN: 5, KeyM: 6, Comma: 7 };
 const typing = (t) => t instanceof Element && t.matches('input, textarea, select, [contenteditable=""], [contenteditable="true"]');
 window.addEventListener('keydown', (e) => {
   // в поле ввода клавиши — это текст («Ветер 1»), а не команды; Escape возвращает управление
@@ -149,6 +160,10 @@ window.addEventListener('keydown', (e) => {
   }
   if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
   if (e.code === 'Space') { e.preventDefault(); transport.playing ? stop() : play(); return; }
+  if (e.code in NOTE_KEYS) {
+    if (typeof engine.playNote === 'function') engine.playNote(NOTE_KEYS[e.code]);
+    return;
+  }
   if (e.code === 'KeyR') { toggleRec(); return; }
   if (FX_KEYS[e.code]) { store.update((s) => ({ ...s, fxTarget: FX_KEYS[e.code] })); return; }
   if (e.key === '/' || e.code === 'Slash') {

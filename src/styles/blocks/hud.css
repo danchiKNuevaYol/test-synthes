@@ -17,3 +17,5 @@
 .hud__hint[hidden] { display: none; }
 @keyframes hud-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 @media (prefers-reduced-motion: reduce) { .hud__hint { animation: none; } }
+
+

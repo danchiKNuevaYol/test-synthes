@@ -6,6 +6,7 @@ const KEYS = [
   ['/', 'место'],
   ['1–5', 'места'],
   ['Q W E', 'цепь погоды'],
+  ['Z–M', 'ноты'],
 ];
 
 export function mountHintLine(el) {
