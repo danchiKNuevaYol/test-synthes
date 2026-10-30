@@ -5,13 +5,13 @@
 .trail__body { flex: 1; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 0 12px; }
 
 /* Подписи строк: высота строк совпадает с полем справа */
-.trail__labels { display: grid; grid-template-rows: 14px repeat(4, 1fr); }
+.trail__labels { display: grid; grid-template-rows: 14px 2fr repeat(4, 1fr); }
 .trail__label { display: flex; align-items: center; gap: 7px; font: 500 10px var(--font-mono); letter-spacing: 0.06em; color: var(--ink); white-space: nowrap; }
 .trail__label .trail__glyph { width: 13px; height: 13px; flex: none; color: var(--ink); fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
 
-.trail__field { position: relative; display: grid; grid-template-rows: 14px repeat(4, 1fr); min-width: 0; }
-.trail__nums, .trail__row { display: grid; grid-template-columns: repeat(16, 1fr); }
-.trail__row { border-top: 1px solid var(--hair); }
+.trail__field { position: relative; display: grid; grid-template-rows: 14px 2fr repeat(4, 1fr); min-width: 0; }
+.trail__nums, .trail__row, .trail__melody { display: grid; grid-template-columns: repeat(16, 1fr); }
+.trail__row, .trail__melody { border-top: 1px solid var(--hair); }
 .trail__num { text-align: center; font: 400 8.5px/14px var(--font-mono); letter-spacing: -0.02em; color: var(--ink-soft); }
 .trail__num.is-beat { color: var(--ink); }
 .trail__num.is-now { background: var(--ink); color: var(--paper); font-weight: 500; }
@@ -25,7 +25,7 @@
 .trail__cell { position: relative; display: grid; place-items: center; min-width: 0; padding: 0; border: 0; background: none; color: var(--ink); border-radius: 0; }
 .trail__cell::before { content: ''; width: 1px; height: 6px; background: var(--ink); opacity: 0.22; }
 .trail__cell.is-beat::before { height: 10px; opacity: 0.4; }
-.trail__mark { position: absolute; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round;
+.trail__mark { position: absolute; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round;
   opacity: 0; }
 .trail__cell:hover::before { opacity: 0.9; }
 .trail__cell.is-on::before { opacity: 0; }
@@ -41,3 +41,24 @@
 .trail__tool:hover, .trail__tool:active { background: var(--ink); color: var(--paper); }
 .trail__tool--icon { width: 26px; padding: 0; display: grid; place-items: center; }
 .trail__tool--icon svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Мелодия: 16 столбиков, нота — короткая горизонтальная черта на высоте ступени (0 внизу, 11 вверху);
+   вместе черты читаются как линия мелодии, волосяная ломаная соединяет соседние ноты, пауза — бледная метка внизу */
+.trail__label--melody { font-weight: 500; }
+.trail__label--melody .sign { width: 13px; height: 13px; }
+.trail__melody { position: relative; cursor: crosshair; touch-action: none; user-select: none; border-bottom: 1px solid var(--hair); }
+.trail__line { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.trail__line path { fill: none; stroke: var(--ink); stroke-width: 1; opacity: 0.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.trail__mcell { position: relative; min-width: 0; padding: 0; border: 0; background: none; color: var(--ink); border-radius: 0; cursor: inherit; }
+/* волосяная направляющая столбика (чем сильнее долей — тем заметнее) и метка паузы внизу */
+.trail__mcell::before { content: ''; position: absolute; left: 50%; top: 8%; bottom: 8%; width: 1px; background: var(--ink); opacity: 0.07; }
+.trail__mcell.is-beat::before { opacity: 0.14; }
+.trail__mcell::after { content: ''; position: absolute; left: 50%; bottom: 8%; width: 7px; margin-left: -3.5px; height: 1px; background: var(--ink); opacity: 0.3; }
+.trail__mcell.is-on::after { display: none; }
+.trail__dash { position: absolute; left: 50%; top: var(--top, 50%); width: 15px; height: 2px; margin: -1px 0 0 -7.5px; background: var(--ink); opacity: 0; }
+.trail__mcell.is-on .trail__dash { opacity: 1; }
+.trail__mcell:hover::before { opacity: 0.35; }
+.trail__mcell.is-now::before { opacity: 0; }
+.trail__mcell.is-now.is-on .trail__dash { height: 4px; margin-top: -2px; }
+.trail__melody.is-drawing .trail__mcell::before { opacity: 0.2; }
+.trail__mcell:focus-visible { outline-offset: -3px; }

@@ -3,6 +3,7 @@
 // Одна и та же строка всегда даёт один и тот же звук: вся «случайность» берётся из PRNG с этим зерном.
 
 import { ARCHETYPES, TRACKS } from './scenes.js';
+import { SCALES } from './music.js';
 
 // Готовые места для быстрого выбора
 export const PRESETS = [
@@ -138,7 +139,11 @@ export function placeToState(query, fxTarget = 'a') {
   }
   for (const k of ['a', 'b', 'p']) st.mix[k] = jit(st.mix[k], 0.08);
   for (const k of Object.keys(st.pan)) st.pan[k] = jit(st.pan[k], 0.15);
-  st.bpm = clamp(Math.round(st.bpm * (1 + (rnd() * 2 - 1) * 0.1)), 40, 200);
+  // Темп берётся из диапазона архетипа (музыкальная часть считается отдельным PRNG ниже)
+  const mus = st.music;
+  delete st.music;
+  const mrnd = mulberry32((place.seed ^ 0x5bd1e995) >>> 0);
+  st.bpm = Math.round(mus.bpm[0] + mrnd() * (mus.bpm[1] - mus.bpm[0]));
 
   // Иногда голос B (а в лесу и «неземном» — и A) берёт другую форму волны.
   // Ветер, дождь и гроза держат A шумом.
@@ -152,19 +157,14 @@ export function placeToState(query, fxTarget = 'a') {
   if (place.weather === 'forest' || place.weather === 'alien') reroll(st.a);
   reroll(st.b);
 
-  // Ритм: плотность дорожки сохраняется (±2 удара), а расставляются удары по зерну
-  st.steps = st.steps.map((track, i) => {
-    const base = track.filter(Boolean).length;
-    const max = TRACKS[i].id === 'boom' ? 3 : 12;
-    const n = clamp(base + Math.floor(rnd() * 5) - 2, 0, max);
-    return scatter(rnd, n);
-  });
+  // Ритм: удары расставляются по музыкальным шаблонам (сильные доли, восьмые, синкопы), по зерну
+  st.steps = TRACKS.map((t) => musicalRow(mrnd, PATTERNS[place.weather][t.id], t.id === 'boom' ? 3 : 16, MIN_HITS[t.id]));
 
   // Время суток
   if (place.night) {
     st.tone = clamp(st.tone - 0.15);
     for (const ch of Object.values(st.fx)) ch.reverb = clamp(ch.reverb + 0.1);
-    st.bpm = clamp(st.bpm - 6, 40, 200);
+    st.bpm = clamp(st.bpm - 4, 40, 200);
     // Ночью в лесу и на ветру дорожка «Щелчок» читается как сверчки
     if (place.weather === 'forest' || place.weather === 'wind') {
       st.steps[1] = fillTo(rnd, st.steps[1], 6);
@@ -173,18 +173,12 @@ export function placeToState(query, fxTarget = 'a') {
   const m = place.minutes;
   if ((m >= 300 && m < 480) || (m >= 1110 && m < 1290)) st.b.mod = clamp(st.b.mod + 0.1);
 
-  return { ...st, scene: null, fxTarget, place };
-}
+  // Тональность, мелодия, раскачка
+  const key = pickKey(mrnd, mus.scales, place.night);
+  const melody = makeMelody(mrnd, mus.rests, place.weather);
+  const swing = clamp(mus.swing + (mrnd() - 0.5) * 0.12 + (place.night ? 0.02 : 0), 0.05, 0.35);
 
-// n ударов на 16 шагах в случайных местах (тасование Фишера — Йетса)
-function scatter(rnd, n) {
-  const idx = Array.from({ length: 16 }, (_, i) => i);
-  for (let i = 15; i > 0; i--) {
-    const j = Math.floor(rnd() * (i + 1));
-    [idx[i], idx[j]] = [idx[j], idx[i]];
-  }
-  const on = new Set(idx.slice(0, n));
-  return Array.from({ length: 16 }, (_, i) => on.has(i));
+  return { ...st, key, melody, swing, scene: null, fxTarget, place };
 }
 
 // Добавляет удары в свободные шаги, пока их не станет хотя бы min
@@ -194,4 +188,123 @@ function fillTo(rnd, track, min) {
   let need = min - out.length + free.length;
   while (need-- > 0 && free.length) out[free.splice(Math.floor(rnd() * free.length), 1)[0]] = true;
   return out;
+}
+
+// «Светлота» ладов: ночью берём самый тёмный из кандидатов, днём — самый светлый
+const BRIGHTNESS = { phrygian: 0, minor: 1, minorPentatonic: 1.5, dorian: 2, pentatonic: 3, wholeTone: 3.5, major: 4, lydian: 5 };
+
+function pickKey(rnd, scales, night) {
+  const root = Math.floor(rnd() * 12);
+  const sorted = scales.slice().sort((a, b) => BRIGHTNESS[a] - BRIGHTNESS[b]);
+  const favorite = night ? sorted[0] : sorted[sorted.length - 1];
+  const other = sorted[Math.floor(rnd() * sorted.length)];
+  const scale = rnd() < 0.7 ? favorite : other;
+  return { root, scale: SCALES[scale] ? scale : 'minor' };
+}
+
+// Мелодия на 16 шагов: плавное движение по ступеням 2…8, две фразы (подъём → разрешение на 8-м и 16-м шагах)
+function makeMelody(rnd, restCount, weather) {
+  const rests = clamp(restCount + (rnd() < 0.4 ? 1 : 0) - (rnd() < 0.4 ? 1 : 0), 3, 6);
+  // Паузы чаще на слабых долях (нечётные индексы), но не на 1, 8 и 16 шагах
+  const odd = shuffle(rnd, [1, 3, 5, 9, 11, 13]);
+  const even = shuffle(rnd, [2, 4, 6, 10, 12, 14]);
+  const restSet = new Set();
+  while (restSet.size < rests) {
+    const fromOdd = (rnd() < 0.7 && odd.length) || !even.length;
+    restSet.add(fromOdd ? odd.pop() : even.pop());
+  }
+  // Опорные точки контура: [индекс, ступень]
+  const res1 = rnd() < 0.65 ? 4 : 0;
+  const res2 = rnd() < 0.65 ? 0 : 4;
+  const start = 3 + Math.floor(rnd() * 3);
+  const peak1 = 6 + Math.floor(rnd() * 2);
+  const peak2 = 5 + Math.floor(rnd() * 3);
+  const anchors = [[0, start], [4, peak1], [7, res1], [10, 4 + Math.floor(rnd() * 2)], [12, peak2], [15, res2]];
+  const target = (i) => {
+    for (let k = 1; k < anchors.length; k++) {
+      if (i <= anchors[k][0]) {
+        const [i0, d0] = anchors[k - 1];
+        const [i1, d1] = anchors[k];
+        return d0 + ((d1 - d0) * (i - i0)) / (i1 - i0);
+      }
+    }
+    return res2;
+  };
+  const out = [];
+  let prev = start;
+  for (let i = 0; i < 16; i++) {
+    let d;
+    if (i === 0) d = start;
+    else if (i === 7) d = res1;
+    else if (i === 15) d = res2;
+    else {
+      const want = Math.round(target(i) + (rnd() - 0.5) * 1.6);
+      d = clamp(clamp(want, prev - 2, prev + 2), 1, 9);
+    }
+    prev = d;
+    out.push(restSet.has(i) ? null : d);
+  }
+  return out;
+}
+
+function shuffle(rnd, arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Шаблоны ударов: [индекс шага 0…15, вероятность]. Сильные доли — 0, 4, 8, 12; восьмые «и» — 2, 6, 10, 14.
+// Раскат — бочка на сильных долях, щелчок — «хэт» на восьмых, треск — «малый» на 5 и 13, капля — колокольчик на синкопах.
+const PATTERNS = {
+  wind: {
+    boom: [[0, 0.9], [8, 0.4]],
+    click: [[2, 0.45], [6, 0.4], [10, 0.45], [14, 0.4], [15, 0.12]],
+    crackle: [[4, 0.35], [12, 0.5]],
+    drop: [[3, 0.45], [6, 0.35], [10, 0.4], [11, 0.4], [14, 0.35]],
+  },
+  rain: {
+    boom: [[0, 0.8], [8, 0.5], [10, 0.15]],
+    click: [[2, 0.95], [6, 0.9], [10, 0.95], [14, 0.85], [1, 0.2], [5, 0.2], [9, 0.2], [13, 0.25], [15, 0.3]],
+    crackle: [[4, 0.75], [12, 0.8], [7, 0.15]],
+    drop: [[3, 0.6], [6, 0.55], [9, 0.4], [11, 0.6], [14, 0.5], [1, 0.2], [13, 0.3]],
+  },
+  storm: {
+    boom: [[0, 1], [8, 0.8], [10, 0.35], [12, 0.3]],
+    click: [[2, 0.25], [6, 0.2], [10, 0.25], [14, 0.3]],
+    crackle: [[4, 0.9], [12, 0.75], [14, 0.2]],
+    drop: [[3, 0.25], [11, 0.3], [14, 0.2]],
+  },
+  forest: {
+    boom: [[0, 0.7], [8, 0.3]],
+    click: [[2, 0.55], [6, 0.5], [10, 0.55], [14, 0.5], [3, 0.2], [7, 0.2], [11, 0.2], [15, 0.2]],
+    crackle: [[4, 0.35], [12, 0.35]],
+    drop: [[3, 0.5], [6, 0.45], [10, 0.4], [11, 0.45], [14, 0.4]],
+  },
+  alien: {
+    boom: [[0, 0.6], [6, 0.4], [10, 0.4], [13, 0.3]],
+    click: [[1, 0.4], [3, 0.4], [5, 0.3], [7, 0.4], [9, 0.3], [11, 0.4], [13, 0.3], [14, 0.3]],
+    crackle: [[3, 0.4], [4, 0.3], [11, 0.4], [12, 0.3], [14, 0.25]],
+    drop: [[2, 0.5], [5, 0.5], [7, 0.4], [9, 0.4], [11, 0.4], [14, 0.5], [15, 0.3]],
+  },
+};
+
+const MIN_HITS = { drop: 1, click: 2, crackle: 1, boom: 0 };
+
+// Дорожка из шаблона: каждый удар выпадает с заданной вероятностью, не больше max ударов
+function musicalRow(rnd, pattern, max, min = 0) {
+  const row = Array(16).fill(false);
+  let n = 0;
+  for (const [i, p] of pattern) {
+    if (rnd() < p && n < max) { row[i] = true; n++; }
+  }
+  // Дорожка не должна оставаться пустой: добираем самые вероятные удары шаблона
+  const byProb = pattern.slice().sort((a, b) => b[1] - a[1]);
+  for (const [i] of byProb) {
+    if (n >= min) break;
+    if (!row[i]) { row[i] = true; n++; }
+  }
+  return row;
 }
