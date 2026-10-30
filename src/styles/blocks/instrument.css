@@ -15,9 +15,8 @@
 .instrument__module--voice { flex: 0 0 208px; }
 .instrument__module--weather { flex: 0 0 208px; }
 .instrument__module--trail { flex: 1 1 0; }
-.instrument__module--mixer { flex: 0 0 240px; }
+.instrument__module--mixer { flex: 0 0 284px; }
 .instrument__module--recorder { flex: 0 0 176px; }
 
-/* Ручки голоса: два на два, подписи под ручками */
-.instrument__knobs { flex: 1; display: grid; grid-template-columns: 1fr 1fr; align-content: space-between; gap: 6px 4px; justify-items: center; }
-.instrument__knobs .knob, .weather-kit .knob { --knob-size: 72px; }
+/* Ползунки голоса: четыре в столбик под переключателем волны, поровну по высоте */
+.instrument__sliders { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; min-width: 0; }

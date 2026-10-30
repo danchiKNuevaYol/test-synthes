@@ -3,7 +3,7 @@
 //   data-param   — путь параметра ('*' — текущая цепочка эффектов, fxTarget)
 //   data-channel — тип линии заливки: a — сплошная, b — двойная, p — пунктир, * (линия текущей цепочки); без него — сплошная
 //   data-sign    — знак канала перед названием: a | b | p | m (общий)
-//   data-format, data-default — как показывать значение; значение по двойному клику
+//   data-bipolar — заливка растёт от середины (панорама); data-hint — подсказка; data-format, data-default — вид значения и значение по двойному клику
 //
 // Управление: перетаскивание и клик по дорожке, колесо, стрелки ±0.02, Home/End, двойной клик.
 
@@ -12,13 +12,14 @@ import { FORMATS, clamp01 } from './format.js';
 import { sign } from './signs.js';
 
 const CHANNELS = ['a', 'b', 'p'];
-const THUMB = 9; // сторона бегунка, px
 
 export function mountSlider(el, store) {
   const d = el.dataset;
   const fmt = FORMATS[d.format] || FORMATS.percent;
   const def = d.default != null ? Number(d.default) : 0.5;
   const label = d.label || '';
+  if (d.hint) el.title = d.hint;
+  const bipolar = d.bipolar !== undefined;
   el.innerHTML = `
     <div class="slider__head">
       <span class="slider__label">${d.sign ? sign(d.sign) : ''}${label}</span>
@@ -31,6 +32,7 @@ export function mountSlider(el, store) {
 
   const track = el.querySelector('.slider__track');
   const rail = el.querySelector('.slider__rail');
+  const thumbEl = el.querySelector('.slider__thumb');
   const valueEl = el.querySelector('.slider__value');
   let value = 0;
   let dragging = false;
@@ -40,8 +42,9 @@ export function mountSlider(el, store) {
   // Положение курсора на дорожке → 0..1 (края отступают на радиус бегунка)
   const fromPointer = (e) => {
     const r = rail.getBoundingClientRect();
-    const inner = r.width - THUMB;
-    return inner > 0 ? (e.clientX - r.left - THUMB / 2) / inner : 0;
+    const thumb = thumbEl.offsetWidth * (r.width / (rail.offsetWidth || 1));   // с учётом масштаба прибора
+    const inner = r.width - thumb;
+    return inner > 0 ? (e.clientX - r.left - thumb / 2) / inner : 0;
   };
 
   track.addEventListener('pointerdown', (e) => {
@@ -72,6 +75,8 @@ export function mountSlider(el, store) {
   return function update(state) {
     value = readParam(state, d.param);
     el.style.setProperty('--v', value);
+    el.style.setProperty('--lo', bipolar ? Math.min(value, 0.5) : 0);
+    el.style.setProperty('--hi', bipolar ? Math.max(value, 0.5) : value);
     valueEl.textContent = fmt(value);
     track.setAttribute('aria-valuenow', Math.round(value * 100));
     track.setAttribute('aria-valuetext', fmt(value));

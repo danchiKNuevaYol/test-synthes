@@ -9,7 +9,7 @@ import { mountWorld } from './ui/world.js';
 import { mountHud } from './ui/hud.js';
 import { mountPlaceBar, tuneTo } from './ui/place-bar.js';
 import { mountWaveSwitch } from './ui/wave-switch.js';
-import { mountKnob } from './ui/knob.js';
+import { mountSlider } from './ui/slider.js';
 import { mountFader } from './ui/fader.js';
 import { mountMeter } from './ui/meter.js';
 import { sign } from './ui/signs.js';
@@ -30,15 +30,15 @@ const live = { state: store.get(), step: -1, playing: false, recording: false };
 const world = mountWorld($('.world'), store, live);
 const hud = mountHud($('.hud'));
 const placeBar = mountPlaceBar($('.place-bar'), store);
-const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });   // раньше ручек: в нём живёт ручка РАСКАЧКА
+const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });   // он сам подключает ползунок РАСКАЧКА
 const waveSwitches = $$('.wave-switch[data-param]').map((el) => mountWaveSwitch(el, store));
-const knobs = $$('.knob').map((el) => mountKnob(el, store));
+const sliders = $$('.slider').filter((el) => !el.closest('.weather-kit, .recorder')).map((el) => mountSlider(el, store));   // ползунки голосов и микшера
 const faders = $$('.fader').map((el) => mountFader(el, store));
 const meters = $$('[data-meter]').map((el) => ({ id: el.dataset.meter, update: mountMeter(el) }));
-const weatherKit = mountWeatherKit($('.weather-kit'), store);   // ручки погоды рисует он сам (.knob внутри него)
+const weatherKit = mountWeatherKit($('.weather-kit'), store);   
 const trail = mountTrail($('.trail'), store);
 // знаки каналов в заголовках модулей и подписях полос микшера (SVG, а не символы шрифта)
-$$('.instrument [data-sign]').forEach((el) => { if (!el.classList.contains('knob')) el.insertAdjacentHTML('afterbegin', sign(el.dataset.sign)); });
+$$('.instrument [data-sign]').forEach((el) => el.insertAdjacentHTML('afterbegin', sign(el.dataset.sign)));
 
 // --- прибор рисуется в фиксированном размере (--instrument-w × --instrument-h в stage.css) и целиком
 // масштабируется под окно: ни один модуль не может выйти из рамки. Рисунку остаётся всё остальное место.
@@ -62,7 +62,7 @@ function applyTheme(place) {
   Object.entries(vars).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
 }
 
-const views = [world, placeBar, ...waveSwitches, ...knobs, ...faders, weatherKit, trail.update];
+const views = [world, placeBar, ...waveSwitches, ...sliders, ...faders, weatherKit, trail.update];
 function render(state) {
   live.state = state;
   applyTheme(state.place);

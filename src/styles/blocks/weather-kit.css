@@ -1,5 +1,5 @@
-/* .weather-kit — ПОГОДА: цепочка эффектов выбранного канала. Вкладки канала и четыре ручки по порядку цепи
-   (ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ) в сетке два на два; тип линии дуги — по выбранному каналу. */
+/* .weather-kit — ПОГОДА: цепочка эффектов выбранного канала. Вкладки канала и четыре ползунка по порядку цепи
+   (ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ); тип линии заливки — по выбранному каналу. */
 
 /* Вкладки канала: знак + слово; выбранная — инверсия */
 .weather-kit__targets { display: flex; justify-content: space-between; gap: 2px; }
@@ -10,8 +10,5 @@
 .weather-kit__target.is-on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .weather-kit__target:focus-visible { outline-offset: 2px; }
 
-/* Цепь: ступени идут слева направо и сверху вниз, между первой и второй, третьей и четвёртой — стрелка */
-.weather-kit__chain { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; align-content: space-between; gap: 6px 4px; }
-.weather-kit__stage { position: relative; display: flex; justify-content: center; }
-.weather-kit__arrow { position: absolute; right: -8px; top: 24px; width: 12px; height: 10px; color: var(--ink); background: var(--paper); display: grid; place-items: center; z-index: 1; }
-.weather-kit__arrow svg { width: 12px; height: 10px; fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+/* Цепь: четыре ползунка в столбик по порядку ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ (номера 1–4 в подписях) */
+.weather-kit__chain { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }

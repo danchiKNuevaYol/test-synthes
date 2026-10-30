@@ -1,26 +1,38 @@
-/* .slider — волосяная линия + чёрный квадрат 9×9.
-   Заливка до бегунка показывает канал типом линии: A — сплошная, B — двойная, Ч — пунктир. */
-.slider { --v: 0; display: block; min-width: 0; color: var(--ink); }
+/* .slider — горизонтальный ползунок: подпись слева (моно, капсом), значение справа, ниже дорожка:
+   бледный остаток (тушь 22%), поверх до значения — толстая чёрная заливка, на значении — круглый чёрный бегунок.
+   Заливка может нести тип линии канала (data-channel): A — сплошная, B — двойная, Ч — пунктир; по умолчанию сплошная.
+   data-bipolar — заливка растёт от середины (панорама). .slider--compact — узкий вариант для микшера. */
+.slider { --v: 0; --lo: 0; --hi: 0; --thumb: 14px; --fill: 4px; --rail: 2px;
+  display: block; min-width: 0; color: var(--ink); }
+.slider--compact { --thumb: 12px; --fill: 3px; --rail: 2px; }
 
 .slider__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; line-height: 1; }
 .slider__label { display: inline-flex; align-items: center; gap: 6px; font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
 .slider__value { font: 400 10.5px var(--font-mono); color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 /* Область нажатия выше самой линии, чтобы в неё было легко попасть */
-.slider__track { position: relative; height: 20px; margin-top: 2px; cursor: pointer; touch-action: none; outline: none; }
-.slider__track:focus-visible { outline: 1px dashed var(--ink); outline-offset: 0; }
-.slider__rail { position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -0.5px; background: var(--ink-faint); }
-.slider__fill { position: absolute; left: 0; top: 50%; width: calc(4.5px + (100% - 9px) * var(--v));
-  height: 2px; margin-top: -1px; background: var(--ink); }
-/* B — двойная волосяная линия */
-.slider--b .slider__fill { height: 5px; margin-top: -2.5px;
-  background: linear-gradient(var(--ink), var(--ink)) top / 100% 1px no-repeat, linear-gradient(var(--ink), var(--ink)) bottom / 100% 1px no-repeat; }
-/* Ч — пунктир из точек */
-.slider--p .slider__fill { height: 4px; margin-top: -2px;
-  background: radial-gradient(circle at 50% 50%, var(--ink) 0.95px, transparent 1.25px) left center / 4px 4px repeat-x; }
+.slider__track { position: relative; height: 22px; margin-top: 1px; cursor: pointer; touch-action: none; outline: none; }
+.slider__rail { position: absolute; left: 0; right: 0; top: 50%; height: var(--rail); margin-top: calc(var(--rail) / -2); background: var(--ink-faint); border-radius: 2px; }
+.slider__fill { position: absolute; top: 50%; height: var(--fill); margin-top: calc(var(--fill) / -2); background: var(--ink); border-radius: 2px;
+  left: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--lo));
+  width: calc((100% - var(--thumb)) * (var(--hi) - var(--lo))); }
+/* B — двойная линия: две жилы с просветом */
+.slider--b .slider__fill { background: linear-gradient(var(--ink), var(--ink)) top / 100% 1.5px no-repeat, linear-gradient(var(--ink), var(--ink)) bottom / 100% 1.5px no-repeat; border-radius: 0; }
+/* Ч — пунктир из коротких штрихов */
+.slider--p .slider__fill { background: repeating-linear-gradient(90deg, var(--ink) 0 3px, transparent 3px 5px); border-radius: 0; }
+/* Метка середины у двуполярного */
+.slider[data-bipolar] .slider__rail::after { content: ""; position: absolute; left: 50%; top: -4px; height: calc(var(--rail) + 8px); width: 1px; background: var(--ink-faint); }
 
-.slider__thumb { position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px;
-  left: calc((100% - 9px) * var(--v)); background: var(--ink); border: 1px solid var(--ink); }
-/* Наведение и перетаскивание — инверсия: бегунок становится пустым */
-.slider__track:hover .slider__thumb, .slider.is-drag .slider__thumb { background: var(--paper); }
+.slider__thumb { position: absolute; top: 50%; width: var(--thumb); height: var(--thumb); margin-top: calc(var(--thumb) / -2);
+  left: calc((100% - var(--thumb)) * var(--v)); background: var(--ink); border-radius: 50%; box-sizing: border-box;
+  transition: box-shadow 0.12s; }
+.slider__track:hover .slider__thumb { box-shadow: 0 0 0 3px var(--ink-faint); }
+.slider.is-drag .slider__thumb { box-shadow: 0 0 0 4px var(--ink-faint); }
 .slider.is-drag .slider__track { cursor: grabbing; }
+.slider__track:focus-visible .slider__thumb { box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--ink); }
+
+/* Узкий вариант: подпись над значением по центру */
+.slider--compact .slider__head { flex-direction: column; align-items: center; gap: 3px; }
+.slider--compact .slider__label { font-size: 9px; letter-spacing: 0.04em; }
+.slider--compact .slider__value { font-size: 9.5px; }
+.slider--compact .slider__track { height: 18px; }
