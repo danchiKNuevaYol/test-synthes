@@ -3,137 +3,51 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Experimental Sound Synthesizer</title>
-  <meta name="description" content="Полевой рекордер несуществующих мест: введите место и время — прибор настроится на него и сыграет искусственные природные звуки из простых электронных сигналов, без сэмплов.">
+  <title>Experimental Sound Synthesizer — полевой рекордер несуществующих мест</title>
+  <meta name="description" content="Введите место и время — и прибор настроится на природу, которой нет: ветер, дождь, гроза и лес из простых электронных сигналов, без сэмплов.">
 
-  <!-- Шрифты. Чтобы сменить: поменяйте ссылку здесь и имена в src/styles/fonts.css -->
+  <!-- Шрифты: ссылка здесь, имена — в src/styles/fonts.css -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 
-  <!-- Стили: шрифты → тема → блоки интерфейса (src/styles/blocks/*.css) -->
+  <!-- Стили: шрифты → тема → база → блоки (src/styles/blocks/*.css) -->
   <link rel="stylesheet" href="./src/styles/index.css">
 </head>
 <body>
-<div class="stage">
-  <div class="stage__fit">
-    <main class="device" aria-label="Experimental Sound Synthesizer">
+  <!-- Каркас. Каждый блок рисует своё содержимое сам: модуль src/ui/<блок>.js, стили blocks/<блок>.css -->
 
-      <header class="device__head">
-        <div class="device__brand">
-          <h1 class="device__title">EXPERIMENTAL SOUND SYNTHESIZER</h1>
-          <p class="device__sub">ПОЛЕВОЙ РЕКОРДЕР НЕСУЩЕСТВУЮЩИХ МЕСТ</p>
-        </div>
-        <form class="place-bar" aria-label="Место и время"></form>
-      </header>
+  <!-- Мир: пейзаж места на весь экран (p5) -->
+  <div class="world" aria-hidden="true"></div>
 
-      <div class="device__row device__row--top">
+  <!-- Ручки внутри мира: облако — голос A, горизонт — голос B -->
+  <div class="sky-handle"></div>
+  <div class="horizon-handle"></div>
 
-        <!-- 01 · Голос A -->
-        <section class="panel panel--voice" aria-labelledby="t-voice-a">
-          <h2 class="panel__title" id="t-voice-a"><i class="dot dot--a"></i>ГОЛОС A · ВОЗДУХ</h2>
-          <div class="wave-switch" data-param="a.wave" data-channel="a"></div>
-          <div class="panel__knobs">
-            <div class="knob" data-param="a.tune"  data-label="ВЫСОТА"  data-channel="a" data-format="hz-a" data-default="0.4"></div>
-            <div class="knob" data-param="a.shape" data-label="ПЛОТНОСТЬ" data-default="0.4"></div>
-            <div class="knob" data-param="a.mod"   data-label="ПОРЫВЫ"  data-default="0.4"></div>
-            <div class="knob" data-param="a.level" data-label="БЛИЗОСТЬ" data-channel="a" data-default="0.7"></div>
-          </div>
-        </section>
+  <!-- Название места и время -->
+  <header class="hud"></header>
 
-        <!-- 02 · Дисплей -->
-        <section class="panel panel--display" aria-label="Дисплей">
-          <div class="display"></div>
-        </section>
+  <!-- Куда отправимся: место и время, места-пресеты, ссылка -->
+  <form class="place-bar" aria-label="Место и время"></form>
 
-        <!-- 03 · Голос B -->
-        <section class="panel panel--voice" aria-labelledby="t-voice-b">
-          <h2 class="panel__title" id="t-voice-b"><i class="dot dot--b"></i>ГОЛОС B · СТИХИЯ</h2>
-          <div class="wave-switch" data-param="b.wave" data-channel="b"></div>
-          <div class="panel__knobs">
-            <div class="knob" data-param="b.tune"    data-label="ВЫСОТА"  data-channel="b" data-format="hz-b" data-default="0.4"></div>
-            <div class="knob" data-param="b.texture" data-label="ЗЕРНО"    data-default="0.4"></div>
-            <div class="knob" data-param="b.mod"     data-label="ДРОЖЬ"    data-default="0.4"></div>
-            <div class="knob" data-param="b.level"   data-label="БЛИЗОСТЬ" data-channel="b" data-default="0.7"></div>
-          </div>
-        </section>
+  <!-- Лист наблюдения: точные настройки выбранного голоса (открывается по клику на облако или горизонт) -->
+  <aside class="sheet" hidden></aside>
 
-        <!-- 04 · Цепочка эффектов выбранного канала -->
-        <section class="panel panel--fx fx-rack" aria-labelledby="t-fx">
-          <h2 class="panel__title" id="t-fx"><i class="dot dot--fx"></i>ЭФФЕКТЫ · ЦЕПЬ</h2>
-          <div class="fx-rack__tabs" role="tablist" aria-label="Чья цепочка эффектов">
-            <button type="button" class="fx-rack__tab fx-rack__tab--a" role="tab" data-target="a" title="Цепочка голоса A — клавиша Q">A</button>
-            <button type="button" class="fx-rack__tab fx-rack__tab--b" role="tab" data-target="b" title="Цепочка голоса B — клавиша W">B</button>
-            <button type="button" class="fx-rack__tab fx-rack__tab--p" role="tab" data-target="p" title="Цепочка частиц — клавиша E">Ч</button>
-          </div>
-          <div class="fx-rack__chain">
-            <div class="knob" data-param="fx.*.drive"  data-label="1 ЖАР"    data-color="dark" data-size="46" data-default="0"></div>
-            <div class="knob" data-param="fx.*.mod"    data-label="2 МАРЕВО" data-size="46" data-default="0"></div>
-            <div class="knob" data-param="fx.*.delay"  data-label="3 УЩЕЛЬЕ" data-channel="*" data-size="46" data-default="0"></div>
-            <div class="knob" data-param="fx.*.reverb" data-label="4 ДАЛЬ"   data-size="46" data-default="0"></div>
-          </div>
-        </section>
-      </div>
+  <!-- Погода: цепочка эффектов выбранного канала — ЖАР → МАРЕВО → УЩЕЛЬЕ → ДАЛЬ -->
+  <section class="weather-kit" aria-label="Погода — цепочка эффектов"></section>
 
-      <div class="device__row device__row--bottom">
+  <!-- План местности: каналы как источники вокруг слушателя (расстояние — громкость, сторона — панорама) -->
+  <section class="field-map" aria-label="План местности — каналы"></section>
 
-        <!-- 05 · Ритм частиц -->
-        <section class="panel panel--rhythm" aria-labelledby="t-rhythm">
-          <h2 class="panel__title" id="t-rhythm"><i class="dot dot--p"></i>ЧАСТИЦЫ · 16 НАБЛЮДЕНИЙ</h2>
-          <div class="step-grid"></div>
-        </section>
+  <!-- Тропа: 16 наблюдений, частицы -->
+  <section class="trail" aria-label="Тропа — 16 наблюдений частиц"></section>
 
-        <!-- 06 · Микшер: у каждого канала панорама, индикатор и фейдер -->
-        <section class="panel panel--mixer mixer" aria-labelledby="t-mixer">
-          <h2 class="panel__title" id="t-mixer"><i class="dot dot--master"></i>МИКШЕР · КАНАЛЫ</h2>
-          <div class="mixer__strips">
-            <div class="mixer__strip">
-              <div class="knob" data-param="pan.a" data-channel="a" data-size="32" data-format="pan" data-hint="Панорама воздуха" data-default="0.5"></div>
-              <div class="mixer__body"><div class="meter" data-meter="a"></div><div class="fader" data-param="mix.a" data-label="ВОЗДУХ"></div></div>
-            </div>
-            <div class="mixer__strip">
-              <div class="knob" data-param="pan.b" data-channel="b" data-size="32" data-format="pan" data-hint="Панорама стихии" data-default="0.5"></div>
-              <div class="mixer__body"><div class="meter" data-meter="b"></div><div class="fader" data-param="mix.b" data-label="СТИХИЯ"></div></div>
-            </div>
-            <div class="mixer__strip">
-              <div class="knob" data-param="pan.p" data-channel="p" data-size="32" data-format="pan" data-hint="Панорама частиц" data-default="0.5"></div>
-              <div class="mixer__body"><div class="meter" data-meter="p"></div><div class="fader" data-param="mix.p" data-label="ЧАСТИЦЫ"></div></div>
-            </div>
-            <div class="mixer__strip mixer__strip--master">
-              <div class="knob" data-param="tone" data-channel="master" data-size="32" data-hint="Солнце — яркость общего канала" data-default="0.75"></div>
-              <div class="mixer__body"><div class="meter" data-meter="master"></div><div class="fader" data-param="mix.master" data-label="ОБЩИЙ"></div></div>
-            </div>
-          </div>
-        </section>
+  <!-- Рекордер: запись экспедиции, старт и стоп, темп, общий уровень -->
+  <section class="recorder" aria-label="Рекордер"></section>
 
-        <!-- 07 · Запись -->
-        <section class="panel panel--record recorder" aria-labelledby="t-rec">
-          <h2 class="panel__title" id="t-rec"><i class="dot dot--rec"></i>ЭКСПЕДИЦИЯ</h2>
-          <button type="button" class="recorder__pad" aria-label="Начать или закончить запись (клавиша R)" title="Запись — клавиша R">
-            <span class="recorder__btn"></span>
-          </button>
-          <div class="lcd">
-            <i class="lcd__dot"></i>
-            <b class="lcd__time">00:00</b>
-            <small class="lcd__status">ГОТОВ К ЗАПИСИ</small>
-          </div>
-          <div class="recorder__transport">
-            <button type="button" class="key key--small" data-action="play" aria-label="Играть" title="Играть — пробел">▶</button>
-            <button type="button" class="key key--small" data-action="stop" aria-label="Стоп" title="Стоп — пробел">■</button>
-            <button type="button" class="key key--small" data-action="save" aria-label="Скачать запись" title="Скачать запись (WAV)">⭳</button>
-          </div>
-        </section>
-      </div>
+  <!-- Подсказка по клавишам -->
+  <footer class="hint-line"></footer>
 
-      <footer class="device__foot">
-        <span>ESS — 01</span>
-        <span class="device__keys">ПРОБЕЛ — СТАРТ / СТОП · R — ЗАПИСЬ · / — МЕСТО · 1–5 — МЕСТА · Q W E — ЦЕПЬ</span>
-        <span>ВЕБ-АУДИО ИНСТРУМЕНТ</span>
-      </footer>
-    </main>
-  </div>
-</div>
-
-<script type="module" src="./src/main.js"></script>
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>

@@ -1,15 +1,35 @@
-/* .place-bar — строка места и времени в шапке: поле, «Настроить», пресеты, ссылка */
-.place-bar { justify-self: end; margin: 0; display: flex; align-items: center; gap: 6px; }
-.place-bar__input { width: 252px; height: 28px; padding: 0 10px; border: 1px solid #000; border-radius: 6px; background: var(--lcd); color: #f2f2f2; caret-color: var(--ch-a); outline: none;
-  font: 500 11px var(--font-mono); letter-spacing: 0.02em; text-overflow: ellipsis; box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.9), 0 1px 0 #fff; }
-.place-bar__input::placeholder { color: #8d8f92; opacity: 1; }
-.place-bar__input:focus { box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.9), 0 1px 0 #fff, 0 0 0 2px rgba(237, 132, 69, 0.55); }
+/* .place-bar — тонкая стеклянная строка места справа сверху.
+   Первая строка: поле, «НАСТРОИТЬ», «ССЫЛКА». Вторая: места-пресеты. */
+.place-bar {
+  position: fixed; top: 3.5vh; right: 2.5vw; z-index: 6; width: 52vw; max-width: 600px; margin: 0;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 14px;
+  padding: 8px 14px 9px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: 10px;
+  backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  color: var(--ink); text-shadow: 0 1px 8px var(--shadow);
+}
+.place-bar__input {
+  order: 1; flex: 1 1 200px; min-width: 0; height: 26px; padding: 0 2px; border: 0; border-bottom: 1px solid var(--glass-line); border-radius: 0;
+  background: transparent; color: var(--ink); caret-color: var(--ch-a); outline: none;
+  font: 500 12px var(--font-mono); letter-spacing: 0.02em; text-overflow: ellipsis; transition: border-color 0.2s;
+}
+.place-bar__input::placeholder { color: var(--ink-soft); opacity: 1; }
+.place-bar__input:focus { border-bottom-color: var(--ink); box-shadow: 0 1px 0 var(--glow); }
 
-.place-bar__go, .place-bar__link { height: 28px; padding: 0 12px; border-radius: 8px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; white-space: nowrap; }
-.place-bar__link { width: 104px; padding: 0; }
-.place-bar__link.is-done { color: #fff; border-color: var(--ch-b-lo); background: linear-gradient(160deg, var(--ch-b-hi), var(--ch-b) 40%, var(--ch-b-lo)); text-shadow: 0 1px 1px rgba(20, 50, 100, 0.4); }
-.place-bar__sep { width: 1px; height: 18px; margin: 0 4px; background: var(--panel-line); }
+.place-bar__go, .place-bar__link {
+  order: 1; height: 26px; padding: 0 2px; white-space: nowrap;
+  font: 600 10px var(--font-ui); letter-spacing: 0.14em; color: var(--ink-soft); transition: color 0.15s;
+}
+.place-bar__go:hover, .place-bar__link:hover { color: var(--ink); }
+.place-bar__link.is-done { color: var(--ch-b); }
 
-.place-bar__chip { height: 28px; padding: 0 11px; border: 1px solid #b3ada6; border-radius: 8px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; white-space: nowrap; background: linear-gradient(160deg, #fdfbf8, #d6d4d0); box-shadow: 0 2px 3px rgba(40, 34, 28, 0.28), inset 0 1px 0 #fff; }
-.place-bar__chip:active { transform: translateY(1px); }
-.place-bar__chip.is-on { color: #fff; border-color: var(--ch-a-lo); background: linear-gradient(160deg, var(--ch-a-hi), var(--ch-a) 40%, var(--ch-a-lo)); text-shadow: 0 1px 1px rgba(120, 50, 10, 0.4); }
+/* первый разделитель — перенос строки, второй не нужен */
+.place-bar__sep { display: none; }
+.place-bar__sep:first-of-type { display: block; order: 2; flex-basis: 100%; height: 0; margin: -4px 0 0; }
+
+.place-bar__chip {
+  order: 3; height: 22px; padding: 0 1px; white-space: nowrap;
+  font: 600 10px var(--font-ui); letter-spacing: 0.14em; color: var(--ink-soft);
+  border-bottom: 1px solid transparent; transition: color 0.15s, border-color 0.15s;
+}
+.place-bar__chip:hover { color: var(--ink); }
+.place-bar__chip.is-on { color: var(--ink); border-bottom-color: var(--ch-a); }

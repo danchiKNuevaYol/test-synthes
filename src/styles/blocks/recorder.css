@@ -1,11 +1,42 @@
-/* .recorder — запись исполнения */
-.recorder__pad { height: 86px; padding: 0; border: 1px solid #c9c7c2; border-radius: 10px; background: linear-gradient(#e6e4e0, #f2f1ee); box-shadow: inset 0 2px 4px rgba(40, 34, 28, 0.18); display: grid; place-items: center; }
-.recorder__btn { width: 62px; height: 62px; border-radius: 50%; background: radial-gradient(circle at 50% 50%, #e0574a 0 52%, transparent 53%), conic-gradient(from 200deg, #fcfbf9, #a9a7a2 25%, #f4f2ee 50%, #a9a7a2 75%, #fcfbf9); box-shadow: 0 3px 5px rgba(40, 34, 28, 0.4); }
-.recorder__pad:active .recorder__btn { transform: translateY(1px); }
-.recorder__pad.is-on .recorder__btn { animation: rec-pulse 1.1s ease-in-out infinite; }
-@keyframes rec-pulse {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(224, 87, 74, 0.35), 0 0 18px rgba(224, 87, 74, 0.8); }
-  50% { box-shadow: 0 0 0 5px rgba(224, 87, 74, 0.15), 0 0 8px rgba(224, 87, 74, 0.4); }
+/* .recorder — стеклянная панель справа снизу */
+.recorder {
+  position: fixed; right: 2.5vw; bottom: 34px; z-index: 5; width: 270px;
+  display: flex; flex-direction: column; gap: 10px; padding: 12px 14px 10px;
+  background: var(--glass); border: 1px solid var(--glass-line); border-radius: 10px;
+  backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  color: var(--ink); text-shadow: 0 1px 8px var(--shadow);
 }
-.recorder__transport { display: flex; gap: 8px; margin-top: auto; }
-.recorder__transport .key { flex: 1; height: 36px; }
+.recorder__title { margin: 0; font: 600 10px var(--font-ui); letter-spacing: 0.16em; color: var(--ink-soft); }
+
+.recorder__main { display: flex; align-items: center; gap: 12px; }
+.recorder__rec { width: 46px; height: 46px; flex: none; border-radius: 50%; display: grid; place-items: center; text-shadow: none; }
+.recorder__rec svg { width: 46px; height: 46px; overflow: visible; }
+.recorder__ring { stroke: var(--glass-line); transition: stroke 0.2s; }
+.recorder__core { fill: var(--rec); transform-origin: 24px 24px; transition: transform 0.2s, rx 0.2s; }
+.recorder__rec:hover .recorder__ring { stroke: var(--ink-soft); }
+.recorder__rec:active .recorder__core { transform: scale(0.92); }
+.recorder__rec.is-on .recorder__ring { stroke: var(--rec); }
+.recorder__rec.is-on .recorder__core { animation: rec-pulse 1.1s ease-in-out infinite; }
+@keyframes rec-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.82); } }
+
+.recorder__readout { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.recorder__time { font: 500 28px/1 var(--font-mono); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.recorder__status { font: 500 9.5px var(--font-ui); letter-spacing: 0.14em; color: var(--ink-soft); white-space: nowrap; }
+.recorder__rec.is-on ~ .recorder__readout .recorder__status { color: var(--rec); }
+
+.recorder__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.recorder__transport { display: flex; gap: 4px; }
+.recorder__btn { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--glass-line); border-radius: 50%; color: var(--ink); text-shadow: none; transition: background 0.15s, color 0.15s; }
+.recorder__btn svg { width: 14px; height: 14px; }
+.recorder__btn:hover:not(:disabled) { background: var(--glass-strong); }
+.recorder__btn.is-on { border-color: var(--ch-a); color: var(--ch-a); }
+
+.recorder__tempo { display: flex; align-items: center; gap: 4px; }
+.recorder__label { font: 600 9.5px var(--font-ui); letter-spacing: 0.14em; color: var(--ink-soft); margin-right: 2px; }
+.recorder__step { width: 22px; height: 22px; border-radius: 50%; font: 500 15px/1 var(--font-mono); color: var(--ink); display: grid; place-items: center; }
+.recorder__step:hover { background: var(--glass-strong); }
+.recorder__bpm { min-width: 2.2ch; text-align: center; font: 500 13px var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.recorder__sliders { display: flex; flex-direction: column; gap: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .recorder__rec.is-on .recorder__core { animation: none; } }

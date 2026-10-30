@@ -37,12 +37,12 @@ export function mountPlaceBar(el, store) {
   el.innerHTML = `
     <input class="place-bar__input" type="text" spellcheck="false" autocomplete="off" maxlength="60"
       placeholder="Куда отправимся? Место и время…" aria-label="Место и время, например: Озеро Тишины, 4:12">
-    <button type="submit" class="key place-bar__go" title="Настроить прибор на это место — Enter">НАСТРОИТЬ ↵</button>
+    <button type="submit" class="place-bar__go" title="Настроить прибор на это место — Enter">НАСТРОИТЬ ↵</button>
     <i class="place-bar__sep" aria-hidden="true"></i>
     ${PRESETS.map((p, i) => `
     <button type="button" class="place-bar__chip" data-index="${i}" title="${p.query} — клавиша ${i + 1}">${p.label}</button>`).join('')}
     <i class="place-bar__sep" aria-hidden="true"></i>
-    <button type="button" class="key place-bar__link" title="Скопировать ссылку на это место">ССЫЛКА</button>`;
+    <button type="button" class="place-bar__link" title="Скопировать ссылку на это место">ССЫЛКА</button>`;
 
   const input = el.querySelector('.place-bar__input');
   const chips = [...el.querySelectorAll('.place-bar__chip')];

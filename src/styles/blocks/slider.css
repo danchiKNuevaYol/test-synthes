@@ -1,0 +1,23 @@
+/* .slider — тонкий регулятор: название слева, значение справа, под ними дорожка 2px */
+.slider { --slider-color: var(--ink); --v: 0; display: block; min-width: 0; color: var(--ink); }
+.slider--a { --slider-color: var(--ch-a); }
+.slider--b { --slider-color: var(--ch-b); }
+.slider--p { --slider-color: var(--ch-p); }
+
+.slider__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; line-height: 1; }
+.slider__label { font: 500 10px var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+.slider__value { font: 400 10.5px var(--font-mono); color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* Область нажатия выше самой линии, чтобы в неё было легко попасть */
+.slider__track { position: relative; height: 20px; margin-top: 2px; cursor: pointer; touch-action: none; outline: none; }
+.slider__rail { position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; border-radius: 1px; background: var(--glass-line); }
+.slider__fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 1px; background: var(--slider-color);
+  width: calc(5.5px + (100% - 11px) * var(--v)); }
+.slider__thumb { position: absolute; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; border-radius: 50%;
+  left: calc((100% - 11px) * var(--v)); background: var(--slider-color); box-shadow: 0 0 0 3px var(--glass), 0 0 8px var(--glow);
+  transition: transform 0.12s ease; }
+.slider__track:hover .slider__thumb, .slider.is-drag .slider__thumb { transform: scale(1.18); }
+.slider__track:focus-visible .slider__thumb { box-shadow: 0 0 0 3px var(--glass), 0 0 0 5px var(--slider-color); }
+.slider__track:focus-visible { outline: none; }
+.slider.is-drag .slider__track { cursor: grabbing; }
+@media (prefers-reduced-motion: reduce) { .slider__thumb { transition: none; } }

@@ -1,0 +1,13 @@
+/* .hint-line — самая нижняя строка: клавиши */
+.hint-line {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; height: 24px;
+  display: flex; justify-content: center; align-items: center; gap: 22px;
+  padding: 0 2.5vw; pointer-events: none; overflow: hidden; white-space: nowrap;
+  font: 500 10px var(--font-ui); letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-soft); text-shadow: 0 1px 6px var(--shadow);
+}
+.hint-line__key {
+  font: 500 10px var(--font-mono); letter-spacing: 0.04em; color: var(--ink);
+  padding: 1px 5px; margin-right: 3px; border: 1px solid var(--glass-line); border-radius: 3px;
+}
+@media (max-width: 1100px) { .hint-line { gap: 14px; } }
