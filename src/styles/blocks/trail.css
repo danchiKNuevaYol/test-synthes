@@ -13,7 +13,7 @@
 .trail__row, .trail__melody { border-top: 1px solid var(--hair); }
 .trail__num { text-align: center; font: 400 8.5px/14px var(--font-mono); letter-spacing: -0.02em; color: var(--ink-soft); }
 .trail__num.is-beat { color: var(--ink); }
-.trail__num.is-now { background: var(--ink); color: var(--paper); font-weight: 500; }
+.trail__num.is-now { outline: 1px solid var(--ink); outline-offset: -1px; color: var(--ink); font-weight: 500; }   /* текущий шаг — рамка */
 
 /* Текущий шаг: две тонкие вертикальные линейки по краям столбца, ширина ровно в один столбец */
 .trail__now { position: absolute; left: 0; top: 0; bottom: 0; width: calc(100% / 16); pointer-events: none;

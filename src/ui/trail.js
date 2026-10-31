@@ -27,7 +27,8 @@ const svg = (id, cls) => `<svg class="${cls}" viewBox="0 0 16 16" aria-hidden="t
 const withSteps = (s, steps) => ({ ...s, scene: null, steps });
 
 export function mountTrail(el, store) {
-  const nums = Array.from({ length: 16 }, (_, i) => `<span class="trail__num${i % 4 === 0 ? ' is-beat' : ''}">${i + 1}</span>`).join('');
+  // подписаны только доли: 1 · 5 · 9 · 13
+  const nums = Array.from({ length: 16 }, (_, i) => `<span class="trail__num${i % 4 === 0 ? ' is-beat' : ''}">${i % 4 === 0 ? i + 1 : ''}</span>`).join('');
   const labels = TRACKS.map((t) => `
     <div class="trail__label">${t.name}</div>`).join('');
   const melodyLabel = `<div class="trail__label trail__label--melody">МЕЛОДИЯ</div>`;
