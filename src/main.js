@@ -24,6 +24,8 @@ const $$ = (s) => [...document.querySelectorAll(s)];
 // Место берётся из адреса (?place=Озеро Тишины, 4:12) — так прибором делятся ссылкой. Без адреса прибор открывается пустым
 const startQuery = normalizeQuery(new URLSearchParams(location.search).get('place') || '');
 const store = createStore(startQuery ? placeToState(startQuery) : blankState());
+// убираем старый ?place= из адреса: следующее обновление страницы снова откроет пустой прибор
+if (startQuery) { try { history.replaceState(null, '', location.pathname + location.hash); } catch { /* не страшно */ } }
 const live = { state: store.get(), step: -1, playing: false, recording: false };   // для пейзажа (p5) и заголовка
 
 // --- блоки. Всё, что в index.html размечено атрибутами data-*, подключается по классу

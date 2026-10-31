@@ -4,14 +4,12 @@
 
 import { PRESETS, placeToState, normalizeQuery } from '../state/place.js';
 
-/** Настроить прибор на место и записать его в адрес страницы (?place=…). */
+/** Настроить прибор на место. Адрес страницы не трогаем: после обновления прибор снова пустой.
+    Открыть сразу на месте можно ссылкой вида ?place=… — её читает main.js при загрузке. */
 export function tuneTo(store, query) {
   const q = normalizeQuery(query);
   if (!q) return;
   store.update((s) => placeToState(q, s.fxTarget));
-  try {
-    history.replaceState(null, '', `${location.pathname}?place=${encodeURIComponent(q)}${location.hash}`);
-  } catch { /* адрес менять нельзя (например, во встроенном окне) — не страшно */ }
 }
 
 export function mountPlaces(el, store) {
