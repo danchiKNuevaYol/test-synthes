@@ -1,8 +1,8 @@
-/* .places — места-пресеты внутри рекордера. Сетку задаёт .recorder__deck (2×3, в шестой клетке — темп);
+/* .places — места-пресеты внутри рекордера: тонкие кнопки в две колонки;
    выбранное место — двойная рамка. */
 .places { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
 .places__item {
-  min-width: 0; min-height: 0; display: flex; align-items: center; gap: 6px; padding: 0 6px; box-sizing: border-box;
+  min-width: 0; height: 22px; display: flex; align-items: center; gap: 6px; padding: 0 6px; box-sizing: border-box;
   border: 1px solid var(--ink-faint); color: var(--ink); text-align: left;
   font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); white-space: nowrap;
 }

@@ -1,4 +1,4 @@
-/* .recorder — запись. Сверху REC и таймер, под ними транспорт, внизу сетка 2×3: пять мест и темп. REC — квадрат в квадрате;
+/* .recorder — запись. Сверху REC и таймер, под ними транспорт, внизу места и строка темпа. REC — квадрат в квадрате;
    при записи внутренний залит, внешний медленно «дышит» */
 .recorder { gap: 8px; }
 
@@ -22,14 +22,12 @@
 .recorder__btn:hover:not(:disabled), .recorder__btn.is-on { background: var(--ink); color: var(--paper); }
 .recorder__btn:disabled { border-color: var(--ink-faint); }
 
-/* сетка 2×3 равных клеток занимает всё оставшееся место: .places растворяется в ней, темп — шестая клетка той же рамки */
-.recorder__deck { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 4px; }
-.recorder__deck .places { display: contents; }
-.recorder__tempo { min-width: 0; box-sizing: border-box; display: grid; grid-template-columns: 26px minmax(0, 1fr) 26px; align-items: stretch;
-  border: 1px solid var(--ink-faint); color: var(--ink); }
-.recorder__tempo:hover, .recorder__tempo:focus-within { border-color: var(--ink); }
-.recorder__step { display: grid; place-items: center; font: 500 14px/1 var(--font-num); color: var(--ink); }
+/* ниже — места (тонкие кнопки 2 колонки, прижаты к низу) и последней строкой темп: «−» и «+» по краям, число по центру */
+.recorder__deck { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
+.recorder__deck .places { display: grid; }
+.recorder__tempo { display: grid; grid-template-columns: 22px minmax(0, 1fr) 22px; align-items: center; height: 22px; color: var(--ink); }
+.recorder__step { width: 22px; height: 22px; border: 1px solid var(--ink); display: grid; place-items: center; font: 500 14px/1 var(--font-num); color: var(--ink); }
 .recorder__step:hover { background: var(--ink); color: var(--paper); }
-.recorder__bpm { display: grid; place-items: center; font: 500 12px var(--font-num); font-variant-numeric: tabular-nums; }
+.recorder__bpm { text-align: center; font: 500 13px var(--font-num); font-variant-numeric: tabular-nums; }
 
 @media (prefers-reduced-motion: reduce) { .recorder__rec.is-on .recorder__ring { animation: none; } }
