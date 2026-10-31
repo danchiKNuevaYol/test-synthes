@@ -17,11 +17,13 @@
 }
 */
 
+/* «Ubuntu» в начале списка подгружается только с буквами «Г» и «г» (см. index.html, параметр text=),
+   поэтому из него берутся лишь они, а всё остальное — из Ubuntu Mono. */
 :root {
-  --font-display: "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* крупные надписи */
-  --font-ui:      "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* подписи, кнопки, места */
-  --font-mono:    "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* подписи капсом */
-  --font-num:     "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* только цифры: значения, таймер, темп, номера шагов */
+  --font-display: "Ubuntu", "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* крупные надписи */
+  --font-ui:      "Ubuntu", "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* подписи, кнопки, места */
+  --font-mono:    "Ubuntu", "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* подписи капсом */
+  --font-num:     "Ubuntu", "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* только цифры: значения, таймер, темп, номера шагов */
 
   --fs-label: 10px;    /* мелкие подписи */
   --ls-caps: 0.14em;   /* разрядка заглавных */
