@@ -283,51 +283,6 @@ function sketch(store, live, bridge, el) {
         clouds.push({ cx: cx2, cy: cy2, sx: 3.4 * R2 * 1.3 + 0.5 * R2, sy: 2.8 * R2, al: 0.22 });
         c2 = { cx: cx2, cy: cy2, R: R2, ext: ext2, side: cx2 >= cx ? 1 : -1 };
       }
-      // третье облачко «подальше»: самое маленькое (2 клуба), бледнее; с другой стороны от главного, иначе дальше за вторым.
-      // Положение подбирается так, чтобы был просвет неба до обоих облаков, диска светила, гряд и краёв; не влезает — уменьшаем, затем пропускаем.
-      if (c2) {
-        const sd = terrain.cloudMix, ph = sd[8] * 6.28;
-        const tS = (minutes - 360) / 720, tM = (((minutes - 1080) % 1440 + 1440) % 1440) / 720;
-        const body = tS >= 0 && tS <= 1 ? tS : tM >= 0 && tM <= 1 ? tM : -1;
-        const bx = 0.1 * W + 0.8 * W * body, by = hy - Math.sin(Math.PI * body) * (hy - 0.1 * H), rs = 0.077 * H + 8;
-        const GAP = 0.05 * W, MG = 0.04 * W, ext3 = 2.2;
-        const dir = sd[6] < 0.5 ? -1 : 1;                       // выше или ниже второго
-        for (const kS of [1, 0.85, 0.7, 0.55]) {
-          const R3 = R * (0.38 + 0.07 * sd[7]) * kS;
-          if (R3 < 0.28 * R) break;
-          const hw = ext3 * R3 * 1.3 + 0.2 * R3, dr = R3 * 0.9;  // полуширина с запасом и размах дрейфа
-          const xMin = MG + hw + dr, xMax = W - MG - hw - dr;
-          const dMain = EXT_X * R + hw + dr + GAP, d2 = (c2.ext + 0.4) * c2.R * 1.3 + hw + dr + GAP;
-          const jit = (0.3 + 1.2 * sd[9]) * R3;
-          const cand = [cx - c2.side * (dMain + jit), c2.cx + c2.side * (d2 + jit)];
-          for (let ci = 0; ci < 2; ci++) {
-            let x3 = Math.min(xMax, Math.max(xMin, cand[ci]));
-            if (Math.abs(x3 - cx) < dMain || Math.abs(x3 - c2.cx) < d2) continue;
-            let y3 = c2.cy + dir * (0.6 + 0.5 * sd[5]) * R;
-            let yB3 = S.rTop - 6;
-            const k0 = Math.max(0, Math.floor((x3 - hw - dr) / STEP)), k1 = Math.min(terrain.cols - 1, Math.ceil((x3 + hw + dr) / STEP));
-            for (const rg of terrain.ridges) for (let i = k0; i <= k1; i++) yB3 = Math.min(yB3, ridgeTopY(rg, hy, i) - 6);
-            const lo = yTop + EXT_Y * R3 + 4, hi = yB3 - EXT_Y * R3 - 0.15 * R3;
-            if (hi < lo) continue;
-            y3 = Math.min(hi, Math.max(lo, y3));
-            if (body >= 0) {
-              const ddx = (x3 - bx) / (hw + dr + rs), ddy = (y3 - by) / (EXT_Y * R3 + rs);
-              if (ddx * ddx + ddy * ddy < 1) continue;
-            }
-            x3 += Math.sin(clock * 0.07 + ph) * dr * (0.3 + 0.7 * a.mod);              // совсем медленный дрейф по ветру
-            y3 += Math.sin(clock * 0.13 + ph) * R3 * 0.12 * (0.3 + a.mod);
-            const sw3 = swirl * 0.6, br3 = 0.3 + 0.7 * lv.a;
-            LOBES2[0].forEach(([dx, dy, r], i) => {
-              const br = 1 + 0.025 * Math.sin(clock * 0.4 + ph + i * 2.3) * br3;
-              lobes.push({ x: x3 + dx * 1.3 * R3, y: y3 + dy * R3, rr: r * R3 * br, sw: (i % 2 ? -1 : 1) * sw3 * (0.7 + 0.3 * r) });
-            });
-            clouds.push({ cx: x3, cy: y3, sx: 3.0 * R3 * 1.3, sy: 2.4 * R3, al: 0.08 });
-            ci = 2;
-            break;
-          }
-          if (clouds.length > 2) break;
-        }
-      }
       const wp = [0, 0];
       const warp = (x, y) => {                                // сдвиг точки линии неба закрученными клубами
         for (const L of lobes) {
