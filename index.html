@@ -33,32 +33,6 @@
         <form class="place-bar" aria-label="Место и время"></form>
 
         <div class="instrument__row">
-
-        <!-- Голос A · ВОЗДУХ — сплошная линия, знак ○ -->
-        <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-a">
-          <h2 class="instrument__title visually-hidden" id="t-voice-a" data-sign="a">ГОЛОС A · ВОЗДУХ</h2>
-          <div class="wave-switch" data-param="a.wave" data-channel="a"></div>
-          <div class="instrument__sliders">
-            <div class="slider" data-param="a.tune"           data-label="ВЫСОТА"       data-channel="a" data-format="hz-a" data-default="0.4"></div>
-            <div class="slider" data-param="macro.a.character" data-label="ХАРАКТЕР"     data-channel="a" data-hint="Плотность облака и порывы" data-default="0.4"></div>
-            <div class="slider" data-param="macro.a.space"     data-label="ПРОСТРАНСТВО" data-channel="a" data-hint="Даль и эхо" data-default="0.4"></div>
-          </div>
-        </section>
-
-        <!-- Голос B · СТИХИЯ — двойная линия, знак ═ -->
-        <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-b">
-          <h2 class="instrument__title visually-hidden" id="t-voice-b" data-sign="b">ГОЛОС B · СТИХИЯ</h2>
-          <div class="wave-switch" data-param="b.wave" data-channel="b"></div>
-          <div class="instrument__sliders">
-            <div class="slider" data-param="b.tune"           data-label="ВЫСОТА"       data-channel="b" data-format="hz-b" data-default="0.4"></div>
-            <div class="slider" data-param="macro.b.character" data-label="ХАРАКТЕР"     data-channel="b" data-hint="Зерно и дрожь" data-default="0.4"></div>
-            <div class="slider" data-param="macro.b.space"     data-label="ПРОСТРАНСТВО" data-channel="b" data-hint="Даль и эхо" data-default="0.4"></div>
-          </div>
-        </section>
-
-        <!-- Тропа: 16 наблюдений частиц -->
-        <section class="instrument__module instrument__module--trail trail" aria-label="Тропа — 16 наблюдений частиц"></section>
-
         <!-- Микшер: у каждого канала индикатор уровня и фейдер -->
         <section class="instrument__module instrument__module--mixer mixer" aria-labelledby="t-mixer">
           <h2 class="instrument__title visually-hidden" id="t-mixer">МИКШЕР</h2>
@@ -81,7 +55,28 @@
             </div>
           </div>
         </section>
-
+        <!-- Голос A · ВОЗДУХ — сплошная линия, знак ○ -->
+        <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-a">
+          <h2 class="instrument__title visually-hidden" id="t-voice-a" data-sign="a">ГОЛОС A · ВОЗДУХ</h2>
+          <div class="wave-switch" data-param="a.wave" data-channel="a"></div>
+          <div class="instrument__sliders">
+            <div class="slider" data-param="a.tune"           data-label="ВЫСОТА"       data-channel="a" data-format="hz-a" data-default="0.4"></div>
+            <div class="slider" data-param="macro.a.character" data-label="ХАРАКТЕР"     data-channel="a" data-hint="Плотность облака и порывы" data-default="0.4"></div>
+            <div class="slider" data-param="macro.a.space"     data-label="ПРОСТРАНСТВО" data-channel="a" data-hint="Даль и эхо" data-default="0.4"></div>
+          </div>
+        </section>
+        <!-- Тропа: 16 наблюдений частиц -->
+        <section class="instrument__module instrument__module--trail trail" aria-label="Тропа — 16 наблюдений частиц"></section>
+        <!-- Голос B · СТИХИЯ — двойная линия, знак ═ -->
+        <section class="instrument__module instrument__module--voice" aria-labelledby="t-voice-b">
+          <h2 class="instrument__title visually-hidden" id="t-voice-b" data-sign="b">ГОЛОС B · СТИХИЯ</h2>
+          <div class="wave-switch" data-param="b.wave" data-channel="b"></div>
+          <div class="instrument__sliders">
+            <div class="slider" data-param="b.tune"           data-label="ВЫСОТА"       data-channel="b" data-format="hz-b" data-default="0.4"></div>
+            <div class="slider" data-param="macro.b.character" data-label="ХАРАКТЕР"     data-channel="b" data-hint="Зерно и дрожь" data-default="0.4"></div>
+            <div class="slider" data-param="macro.b.space"     data-label="ПРОСТРАНСТВО" data-channel="b" data-hint="Даль и эхо" data-default="0.4"></div>
+          </div>
+        </section>
         <!-- Рекордер: запись экспедиции, старт и стоп, темп -->
         <section class="instrument__module instrument__module--recorder recorder" aria-label="Рекордер"></section>
 
