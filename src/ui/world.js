@@ -248,7 +248,7 @@ function sketch(store, live, bridge, el) {
         const R2 = R * (0.5 + 0.12 * sd[1]);
         const n2 = sd[2] < 0.5 ? 2 : 3;
         const ext2 = n2 === 2 ? 2.2 : 2.5;                      // вылет клубов в R2
-        const need = EXT_X * R + (ext2 + 0.7) * R2;             // расстояние между центрами без касания
+        const need = EXT_X * R + (ext2 + 0.7) * R2 + 0.06 * W;  // расстояние между центрами: без касания плюс заметный просвет неба
         const xMin = 0.3 * W + ext2 * R2, xMax = 0.975 * W - ext2 * R2;
         let side = side0, cx2 = cx + side * (need + sd[3] * R2);
         if (cx2 < xMin || cx2 > xMax) { side = -side; cx2 = cx + side * (need + sd[3] * R2); }
