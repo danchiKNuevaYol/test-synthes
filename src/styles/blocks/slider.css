@@ -36,3 +36,6 @@
 .slider--compact .slider__label { font-size: 9px; letter-spacing: 0.04em; }
 .slider--compact .slider__value { font-size: 9.5px; }
 .slider--compact .slider__track { height: 18px; }
+
+/* Голос B — «другое перо»: ручка-кольцо вместо залитой; заливка — двойная линия (выше) */
+.slider--b .slider__thumb { background: var(--paper); border: 2px solid var(--ink); }
