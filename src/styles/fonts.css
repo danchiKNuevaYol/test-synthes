@@ -18,9 +18,9 @@
 */
 
 :root {
-  --font-display: "Cormorant Garamond", "PT Serif", Georgia, serif;       /* ТОЛЬКО название места и заголовок листа */
-  --font-mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;        /* всё остальное: подписи, цифры, кнопки */
-  --font-ui:      var(--font-mono);                                        /* интерфейс целиком — моно */
+  --font-display: "Ubuntu", "Helvetica Neue", Arial, sans-serif;          /* крупные надписи */
+  --font-ui:      "Ubuntu", "Helvetica Neue", Arial, sans-serif;          /* подписи, кнопки, места */
+  --font-mono:    "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* цифры: значения, таймер, темп, номера шагов */
 
   --fs-label: 10px;    /* мелкие подписи */
   --ls-caps: 0.14em;   /* разрядка заглавных */

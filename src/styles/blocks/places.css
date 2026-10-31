@@ -1,0 +1,13 @@
+/* .places — места-пресеты внутри рекордера: сетка в две колонки (3 ряда, последнее место на всю ширину).
+   Строка = номер клавиши (волосяная линия) + название; активное место — инверсия (бумага по туши). */
+.places { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 22px; align-content: center; gap: 4px; }
+.places__item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.places__item {
+  min-width: 0; display: flex; align-items: center; gap: 6px; padding: 0 6px; box-sizing: border-box;
+  border: 1px solid var(--ink-faint); color: var(--ink); text-align: left;
+  font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); white-space: nowrap;
+}
+.places__key { width: 1ch; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.places__item:hover { border-color: var(--ink); }
+.places__item.is-on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.places__item.is-on .places__key { color: var(--paper); }

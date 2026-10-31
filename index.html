@@ -6,10 +6,10 @@
   <title>Experimental Sound Synthesizer — полевой рекордер несуществующих мест</title>
   <meta name="description" content="Введите место и время — и прибор настроится на природу, которой нет: ветер, дождь, гроза и лес из простых электронных сигналов, без сэмплов.">
 
-  <!-- Шрифты: ссылка здесь, имена — в src/styles/fonts.css -->
+  <!-- Шрифты (Ubuntu и Ubuntu Mono): ссылка здесь, имена — в src/styles/fonts.css -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap">
 
   <!-- Стили: шрифты → тема → база → блоки (src/styles/blocks/*.css) -->
   <link rel="stylesheet" href="./src/styles/index.css">
@@ -28,9 +28,6 @@
     <!-- Прибор: рисуется в фиксированном размере и целиком масштабируется под ширину окна (см. main.js → fit) -->
     <div class="stage__dock">
       <section class="instrument" aria-label="Прибор">
-
-        <!-- Строка места: поле, «Настроить», места-пресеты (рисует ui/place-bar.js) -->
-        <form class="place-bar" aria-label="Место и время"></form>
 
         <div class="instrument__row">
         <!-- Микшер: у каждого канала индикатор уровня и фейдер -->
@@ -77,7 +74,7 @@
             <div class="slider" data-param="macro.b.space"     data-label="ПРОСТРАНСТВО" data-channel="b" data-hint="Даль и эхо" data-default="0.4"></div>
           </div>
         </section>
-        <!-- Рекордер: запись экспедиции, старт и стоп, темп -->
+        <!-- Рекордер: запись, таймер, места-пресеты, старт и стоп, темп -->
         <section class="instrument__module instrument__module--recorder recorder" aria-label="Рекордер"></section>
 
       </section>
