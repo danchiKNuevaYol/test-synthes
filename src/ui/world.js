@@ -31,9 +31,10 @@ const GROUND_TOP = 0.7;                                       // с этой в�
 const DEFAULT_PLACE = { name: '', time: '12:00', minutes: 720, weather: 'wind', seed: 1, night: false };
 const WEATHERS = ['wind', 'rain', 'storm', 'forest', 'alien'];
 const RAIN_RATE = { rain: 55, storm: 95 };                    // капель дождя в секунду
-const HAIR = 1, MAIN = 1.25, BOLD = 2;                        // семья толщин линий, px
+let HAIR = 1, MAIN = 1.25, BOLD = 2;                          // семья толщин линий, px (на раскате ненадолго толще: см. jolt)
+let boost = 0, jolt = 0;                                      // раскат: 0…1, гаснет за ~200 мс; линии темнее и толще, горизонт вздрагивает
 let paperHex = '#f3f2ee', paperRgb = [243, 242, 238];   // тон бумаги берём из CSS-переменной --paper
-const ink = (a = 1) => `rgba(17,17,17,${a})`;
+const ink = (a = 1) => `rgba(17,17,17,${Math.min(1, a + (1 - a) * 0.45 * boost)})`;
 
 /** Своё зерно случайных чисел (mulberry32): раскладка гор, звёзд и травы повторяется для одного места. */
 function rng(seed) {
@@ -557,11 +558,11 @@ function sketch(store, live, bridge, el) {
       const n = Math.ceil(W / 5) + 1;
       g.strokeStyle = ink(1); g.lineWidth = BOLD;
       g.beginPath();
-      for (let i = 0; i < n; i++) { const x = Math.min(W, i * 5); const y = hy + S.hWave(x); if (i) g.lineTo(x, y); else g.moveTo(x, y); }
+      for (let i = 0; i < n; i++) { const x = Math.min(W, i * 5); const y = hy + S.hWave(x) + jolt * 3.5 * Math.sin(x * 0.045 + p.millis() * 0.06); if (i) g.lineTo(x, y); else g.moveTo(x, y); }
       g.stroke();
       g.lineWidth = HAIR; g.strokeStyle = ink(0.9);
       g.beginPath();
-      for (let i = 0; i < n; i++) { const x = Math.min(W, i * 5); const y = hy + 4.5 + S.hWave(x - 14) * 0.9; if (i) g.lineTo(x, y); else g.moveTo(x, y); }
+      for (let i = 0; i < n; i++) { const x = Math.min(W, i * 5); const y = hy + 4.5 + S.hWave(x - 14) * 0.9 - jolt * 3.5 * Math.sin(x * 0.045 + 1.6 + p.millis() * 0.06); if (i) g.lineTo(x, y); else g.moveTo(x, y); }
       g.stroke();
     }
 
@@ -674,6 +675,11 @@ function sketch(store, live, bridge, el) {
       g.save();
       p.background(paperRgb[0], paperRgb[1], paperRgb[2]);
 
+      // раскат: ~200 мс все линии чуть толще и темнее, горизонт вздрагивает (холст не инвертируется)
+      jolt = Math.max(0, 1 - (p.millis() - flashAt) / 200);
+      boost = jolt;
+      HAIR = 1 + 0.5 * jolt; MAIN = 1.25 + 0.6 * jolt; BOLD = 2 + 0.8 * jolt;
+
       drawSky(S);
 
       const fl = 1 - (p.millis() - flashAt) / 320;               // молния после вспышки тает ~300 мс
@@ -693,11 +699,6 @@ function sketch(store, live, bridge, el) {
       updateParts(dt, weather, playing);
       drawParts();
 
-      // раскат: на ~120 мс весь холст инвертируется (тушь ↔ бумага)
-      if (p.millis() - flashAt < 120) {
-        g.globalCompositeOperation = 'difference';
-        g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
-      }
       g.restore();
     };
   };

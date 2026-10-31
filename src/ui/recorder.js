@@ -1,4 +1,4 @@
-// Блок .recorder — запись экспедиции: кнопка REC, таймер, старт/стоп/скачать, темп. (ОБЩИЙ и СОЛНЦЕ — в микшере.)
+// Блок .recorder — запись экспедиции: кнопка REC, таймер, места-пресеты (.places, рисует ui/places.js), старт/стоп/скачать, темп. (ОБЩИЙ и СОЛНЦЕ — в микшере.)
 // mountRecorder(el, store, actions) → { update(ui), tick(seconds) }; actions = { play, stop, toggleRec, save }.
 // Все значки — инлайн SVG-контуры (символы вроде «⭳» в системных шрифтах нет). REC — окружность; запись — залитый круг.
 
@@ -25,6 +25,7 @@ export function mountRecorder(el, store, actions) {
         <span class="recorder__status" aria-live="polite">ГОТОВ К ЗАПИСИ</span>
       </div>
     </div>
+    <nav class="places" aria-label="Места — клавиши 1–5"></nav>
     <div class="recorder__row">
       <div class="recorder__transport">
         <button type="button" class="recorder__btn" data-action="play" aria-label="Старт" title="Старт — пробел">${ICONS.play}</button>

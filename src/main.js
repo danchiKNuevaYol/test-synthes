@@ -7,7 +7,7 @@ import { engine } from './audio/engine.js';
 import { uiTheme } from './world/palette.js';
 import { mountWorld } from './ui/world.js';
 import { mountHud } from './ui/hud.js';
-import { mountPlaceBar, tuneTo } from './ui/place-bar.js';
+import { mountPlaces, tuneTo } from './ui/places.js';
 import { mountWaveSwitch } from './ui/wave-switch.js';
 import { mountSlider } from './ui/slider.js';
 import { mountFader } from './ui/fader.js';
@@ -28,8 +28,8 @@ const live = { state: store.get(), step: -1, playing: false, recording: false };
 // --- блоки. Всё, что в index.html размечено атрибутами data-*, подключается по классу
 const world = mountWorld($('.world'), store, live);
 const hud = mountHud($('.hud'));
-const placeBar = mountPlaceBar($('.place-bar'), store);
 const recorder = mountRecorder($('.recorder'), store, { play, stop, toggleRec, save });
+const places = mountPlaces($('.recorder .places'), store);   // места лежат внутри рекордера
 const waveSwitches = $$('.wave-switch[data-param]').map((el) => mountWaveSwitch(el, store));
 const sliders = $$('.slider').filter((el) => !el.closest('.recorder')).map((el) => mountSlider(el, store));   // ползунки голосов и микшера
 const faders = $$('.fader').map((el) => mountFader(el, store));
@@ -60,7 +60,7 @@ function applyTheme(place) {
   Object.entries(vars).forEach(([name, value]) => document.documentElement.style.setProperty(name, value));
 }
 
-const views = [world, placeBar, ...waveSwitches, ...sliders, ...faders, trail.update];
+const views = [world, places, ...waveSwitches, ...sliders, ...faders, trail.update];
 function render(state) {
   live.state = state;
   applyTheme(state.place);
@@ -142,13 +142,7 @@ function save() {
 // --- горячие клавиши для живого исполнения
 // живая игра: нижний ряд клавиш — ступени лада 0…7 голосом B (по e.code, поэтому работает и в русской раскладке)
 const NOTE_KEYS = { KeyZ: 0, KeyX: 1, KeyC: 2, KeyV: 3, KeyB: 4, KeyN: 5, KeyM: 6, Comma: 7 };
-const typing = (t) => t instanceof Element && t.matches('input, textarea, select, [contenteditable=""], [contenteditable="true"]');
 window.addEventListener('keydown', (e) => {
-  // в поле ввода клавиши — это текст («Ветер 1»), а не команды; Escape возвращает управление
-  if (typing(e.target)) {
-    if (e.key === 'Escape') e.target.blur();
-    return;
-  }
   if (e.key === 'Escape') {
     if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     return;
@@ -160,15 +154,8 @@ window.addEventListener('keydown', (e) => {
     return;
   }
   if (e.code === 'KeyR') { toggleRec(); return; }
-  if (e.key === '/' || e.code === 'Slash') {
-    e.preventDefault();
-    const input = $('.place-bar__input');
-    input.focus();
-    input.select();
-    return;
-  }
   const n = Number(e.key);
   if (n >= 1 && n <= PRESETS.length) tuneTo(store, PRESETS[n - 1].query);
 });
 // пробел не должен «нажимать» кнопку, на которой остался фокус
-window.addEventListener('keyup', (e) => { if (e.code === 'Space' && !typing(e.target)) e.preventDefault(); });
+window.addEventListener('keyup', (e) => { if (e.code === 'Space') e.preventDefault(); });

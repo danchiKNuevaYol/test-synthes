@@ -6,7 +6,6 @@
 @import "./blocks/stage.css";
 @import "./blocks/world.css";
 @import "./blocks/hud.css";
-@import "./blocks/place-bar.css";
 @import "./blocks/instrument.css";
 @import "./blocks/wave-switch.css";
 @import "./blocks/fader.css";
@@ -14,4 +13,5 @@
 @import "./blocks/mixer.css";
 @import "./blocks/slider.css";
 @import "./blocks/trail.css";
+@import "./blocks/places.css";
 @import "./blocks/recorder.css";
