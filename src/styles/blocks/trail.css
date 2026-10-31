@@ -11,7 +11,7 @@
 .trail__field { position: relative; display: grid; grid-template-rows: 14px 2fr repeat(4, 1fr); min-width: 0; }
 .trail__nums, .trail__row, .trail__melody { display: grid; grid-template-columns: repeat(16, 1fr); }
 .trail__row, .trail__melody { border-top: 1px solid var(--hair); }
-.trail__num { text-align: center; font: 400 8.5px/14px var(--font-mono); letter-spacing: -0.02em; color: var(--ink-soft); }
+.trail__num { text-align: center; font: 400 8.5px/14px var(--font-num); letter-spacing: -0.02em; color: var(--ink-soft); }
 .trail__num.is-beat { color: var(--ink); }
 .trail__num.is-now { outline: 1px solid var(--ink); outline-offset: -1px; color: var(--ink); font-weight: 500; }   /* текущий шаг — рамка */
 

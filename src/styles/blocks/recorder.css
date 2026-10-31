@@ -14,7 +14,7 @@
 
 /* время и статус: статус занимает всю ширину под кнопкой, чтобы не переноситься */
 .recorder__readout { display: contents; }
-.recorder__time { font: 500 26px/1 var(--font-mono); letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+.recorder__time { font: 500 26px/1 var(--font-num); letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
 .recorder__status { grid-column: 1 / -1; font: 500 9px var(--font-mono); letter-spacing: 0.1em; color: var(--ink-soft); white-space: nowrap; }
 .recorder__rec.is-on ~ .recorder__readout .recorder__status { color: var(--ink); }
 
@@ -27,8 +27,8 @@
 
 .recorder__tempo { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
 .recorder__label { font: 500 9px var(--font-mono); letter-spacing: 0.1em; color: var(--ink-soft); margin-right: 2px; }
-.recorder__step { width: 22px; height: 22px; border: 1px solid var(--ink); font: 500 14px/1 var(--font-mono); color: var(--ink); display: grid; place-items: center; }
+.recorder__step { width: 22px; height: 22px; border: 1px solid var(--ink); font: 500 14px/1 var(--font-num); color: var(--ink); display: grid; place-items: center; }
 .recorder__step:hover { background: var(--ink); color: var(--paper); }
-.recorder__bpm { min-width: 2.4ch; text-align: center; font: 500 13px var(--font-mono); font-variant-numeric: tabular-nums; }
+.recorder__bpm { min-width: 2.4ch; text-align: center; font: 500 13px var(--font-num); font-variant-numeric: tabular-nums; }
 
 @media (prefers-reduced-motion: reduce) { .recorder__rec.is-on .recorder__ring { animation: none; } }

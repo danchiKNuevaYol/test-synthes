@@ -8,7 +8,7 @@
 
 .slider__head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; line-height: 1; }
 .slider__label { display: inline-flex; align-items: center; gap: 6px; font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
-.slider__value { font: 400 10.5px var(--font-mono); color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.slider__value { font: 400 10.5px var(--font-num); color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 /* Область нажатия выше самой линии, чтобы в неё было легко попасть */
 .slider__track { position: relative; height: 22px; margin-top: 1px; cursor: pointer; touch-action: none; outline: none; }
