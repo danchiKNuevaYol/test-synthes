@@ -46,13 +46,13 @@ export function skyHatch(minutes, weather) {
 
 // --- Тема интерфейса: всегда одна и та же — тушь по бумаге. Ключи совместимы с прежними.
 const THEME = {
-  '--paper': '#f3f2ee',
+  '--paper': '#eeeeee',
   '--ink': '#111111',
   '--ink-soft': 'rgba(17, 17, 17, 0.58)',
   '--ink-faint': 'rgba(17, 17, 17, 0.22)',
   '--hair': 'rgba(17, 17, 17, 0.14)',
-  '--glass': 'rgba(243, 242, 238, 0.92)',
-  '--glass-strong': 'rgba(243, 242, 238, 0.97)',
+  '--glass': 'rgba(238, 238, 238, 0.92)',
+  '--glass-strong': 'rgba(238, 238, 238, 0.97)',
   '--glass-line': '#111111',
   '--shadow': 'none',
   '--glow': '#111111',
