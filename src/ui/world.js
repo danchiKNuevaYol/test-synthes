@@ -242,7 +242,8 @@ function sketch(store, live, bridge, el) {
         return { x: cx + dx * 1.3 * R, y: cy + dy * R + Math.sin(clock * 0.4 + i) * R * 0.04 * a.mod, rr: r * R * br, sw: (i % 2 ? -1 : 1) * swirl * (0.7 + 0.3 * r) };
       });
       const spanX = 4.9 * R, spanY = 2.8 * R;
-      const clouds = [{ cx, cy, sx: spanX, sy: spanY }];
+      const clouds = [{ cx, cy, sx: spanX, sy: spanY, al: 0.22 }];
+      let c2 = null;
       // второе облачко: меньше, выше и сбоку от главного (сторона и смещение — от place.seed), идёт за ним
       {
         const sd = terrain.cloudMix, side0 = sd[0] < 0.5 ? -1 : 1;
@@ -279,7 +280,53 @@ function sketch(store, live, bridge, el) {
           const br = 1 + 0.035 * Math.sin(clock * 0.55 + ph + i * 2.1) * br2;     // дышит тише и в своём ритме
           lobes.push({ x: cx2 + dx * 1.3 * R2, y: cy2 + dy * R2 + Math.sin(clock * 0.25 + ph + i) * R2 * 0.03 * a.mod, rr: r * R2 * br, sw: (i % 2 ? 1 : -1) * sw2 * (0.7 + 0.3 * r) });
         });
-        clouds.push({ cx: cx2, cy: cy2, sx: 3.4 * R2 * 1.3 + 0.5 * R2, sy: 2.8 * R2 });
+        clouds.push({ cx: cx2, cy: cy2, sx: 3.4 * R2 * 1.3 + 0.5 * R2, sy: 2.8 * R2, al: 0.22 });
+        c2 = { cx: cx2, cy: cy2, R: R2, ext: ext2, side: cx2 >= cx ? 1 : -1 };
+      }
+      // третье облачко «подальше»: самое маленькое (2 клуба), бледнее; с другой стороны от главного, иначе дальше за вторым.
+      // Положение подбирается так, чтобы был просвет неба до обоих облаков, диска светила, гряд и краёв; не влезает — уменьшаем, затем пропускаем.
+      if (c2) {
+        const sd = terrain.cloudMix, ph = sd[8] * 6.28;
+        const tS = (minutes - 360) / 720, tM = (((minutes - 1080) % 1440 + 1440) % 1440) / 720;
+        const body = tS >= 0 && tS <= 1 ? tS : tM >= 0 && tM <= 1 ? tM : -1;
+        const bx = 0.1 * W + 0.8 * W * body, by = hy - Math.sin(Math.PI * body) * (hy - 0.1 * H), rs = 0.077 * H + 8;
+        const GAP = 0.05 * W, MG = 0.04 * W, ext3 = 2.2;
+        const dir = sd[6] < 0.5 ? -1 : 1;                       // выше или ниже второго
+        for (const kS of [1, 0.85, 0.7, 0.55]) {
+          const R3 = R * (0.38 + 0.07 * sd[7]) * kS;
+          if (R3 < 0.28 * R) break;
+          const hw = ext3 * R3 * 1.3 + 0.2 * R3, dr = R3 * 0.9;  // полуширина с запасом и размах дрейфа
+          const xMin = MG + hw + dr, xMax = W - MG - hw - dr;
+          const dMain = EXT_X * R + hw + dr + GAP, d2 = (c2.ext + 0.4) * c2.R * 1.3 + hw + dr + GAP;
+          const jit = (0.3 + 1.2 * sd[9]) * R3;
+          const cand = [cx - c2.side * (dMain + jit), c2.cx + c2.side * (d2 + jit)];
+          for (let ci = 0; ci < 2; ci++) {
+            let x3 = Math.min(xMax, Math.max(xMin, cand[ci]));
+            if (Math.abs(x3 - cx) < dMain || Math.abs(x3 - c2.cx) < d2) continue;
+            let y3 = c2.cy + dir * (0.6 + 0.5 * sd[5]) * R;
+            let yB3 = S.rTop - 6;
+            const k0 = Math.max(0, Math.floor((x3 - hw - dr) / STEP)), k1 = Math.min(terrain.cols - 1, Math.ceil((x3 + hw + dr) / STEP));
+            for (const rg of terrain.ridges) for (let i = k0; i <= k1; i++) yB3 = Math.min(yB3, ridgeTopY(rg, hy, i) - 6);
+            const lo = yTop + EXT_Y * R3 + 4, hi = yB3 - EXT_Y * R3 - 0.15 * R3;
+            if (hi < lo) continue;
+            y3 = Math.min(hi, Math.max(lo, y3));
+            if (body >= 0) {
+              const ddx = (x3 - bx) / (hw + dr + rs), ddy = (y3 - by) / (EXT_Y * R3 + rs);
+              if (ddx * ddx + ddy * ddy < 1) continue;
+            }
+            x3 += Math.sin(clock * 0.07 + ph) * dr * (0.3 + 0.7 * a.mod);              // совсем медленный дрейф по ветру
+            y3 += Math.sin(clock * 0.13 + ph) * R3 * 0.12 * (0.3 + a.mod);
+            const sw3 = swirl * 0.6, br3 = 0.3 + 0.7 * lv.a;
+            LOBES2[0].forEach(([dx, dy, r], i) => {
+              const br = 1 + 0.025 * Math.sin(clock * 0.4 + ph + i * 2.3) * br3;
+              lobes.push({ x: x3 + dx * 1.3 * R3, y: y3 + dy * R3, rr: r * R3 * br, sw: (i % 2 ? -1 : 1) * sw3 * (0.7 + 0.3 * r) });
+            });
+            clouds.push({ cx: x3, cy: y3, sx: 3.0 * R3 * 1.3, sy: 2.4 * R3, al: 0.08 });
+            ci = 2;
+            break;
+          }
+          if (clouds.length > 2) break;
+        }
       }
       const wp = [0, 0];
       const warp = (x, y) => {                                // сдвиг точки линии неба закрученными клубами
@@ -333,7 +380,7 @@ function sketch(store, live, bridge, el) {
           for (let j = 1; j <= nExtra; j++) {
             const ye = y0 + (gap * j) / (nExtra + 1), thr = 0.9 + 1.3 * terrain.cloudMix[(rowIdx * 5 + j) & 63] * (0.6 + 0.6 * dens);
             if (Math.abs(ye - c.cy) > c.sy) continue;
-            g.strokeStyle = ink(Math.min(0.85, rowAlpha + 0.22));
+            g.strokeStyle = ink(Math.min(0.85, rowAlpha + c.al));
             g.beginPath();
             let pe = false;
             for (let x = c.cx - c.sx; x <= c.cx + c.sx; x += 2.5) {
@@ -373,6 +420,7 @@ function sketch(store, live, bridge, el) {
           if (sy > lastY - 6) continue;
           if (Math.hypot((s.u * W - cx) / 2, sy - cy) < 2.5 * R) continue;
           if (Math.hypot((s.u * W - clouds[1].cx) / 2, sy - clouds[1].cy) < 2.4 * (clouds[1].sy / 2.8)) continue;
+          if (clouds.length > 2 && Math.hypot((s.u * W - clouds[2].cx) / 2, sy - clouds[2].cy) < 2.4 * (clouds[2].sy / 2.4)) continue;
           if (alien && Math.hypot(s.u * W - plx, sy - ply) < hole * 1.05) continue;
           const tw = 0.5 + 0.5 * Math.sin(clock * s.sp + s.ph);
           const al = clamp(hatch.stars * (0.55 + 0.45 * tw) * (1 - s.v * 0.5));
