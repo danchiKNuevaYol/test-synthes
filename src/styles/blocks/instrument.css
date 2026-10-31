@@ -2,10 +2,13 @@
    Внешняя рамка 1px тушью и тонкая линейка под верхней кромкой; модули — рамка 1px, прямые углы, зазоры между ними. */
 .instrument {
   width: var(--instrument-w); height: var(--instrument-h);
-  display: flex; gap: 8px; padding: 10px; min-width: 0;
+  display: flex; flex-direction: column; gap: 6px; padding: 10px; min-width: 0;
   background: var(--paper); color: var(--ink); border: 1px solid var(--ink);
   box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--ink-faint);   /* вторая, бледная линия рамки */
 }
+
+/* ряд модулей под строкой места: забирает всю оставшуюся высоту */
+.instrument__row { flex: 1 1 0; min-height: 0; display: flex; gap: 8px; min-width: 0; }
 
 .instrument__module { position: relative; display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 10px 12px 11px;
   background: var(--paper); border: 1px solid var(--ink); border-radius: 0; box-shadow: none; }
