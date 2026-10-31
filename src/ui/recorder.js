@@ -18,7 +18,7 @@ export function mountRecorder(el, store, actions) {
     <h2 class="recorder__title visually-hidden">РЕКОРДЕР · ЭКСПЕДИЦИЯ</h2>
     <div class="recorder__main">
       <button type="button" class="recorder__rec" aria-pressed="false" aria-label="Запись (R)" title="Запись — R">
-        <svg viewBox="0 0 48 48" aria-hidden="true"><circle class="recorder__ring" cx="24" cy="24" r="22"/><circle class="recorder__core" cx="24" cy="24" r="13"/></svg>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect class="recorder__ring" x="2" y="2" width="44" height="44"/><rect class="recorder__core" x="12" y="12" width="24" height="24"/></svg>
       </button>
       <div class="recorder__readout">
         <output class="recorder__time" aria-live="off">00:00</output>

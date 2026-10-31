@@ -17,7 +17,7 @@ export function tuneTo(store, query) {
 export function mountPlaces(el, store) {
   el.innerHTML = PRESETS.map((p, i) => `
     <button type="button" class="places__item" data-index="${i}" aria-pressed="false" title="${p.query} — клавиша ${i + 1}">
-      <span class="places__key" aria-hidden="true">${i + 1}</span><span class="places__name">${p.label}</span>
+      <span class="places__name">${p.label}</span>
     </button>`).join('');
 
   const items = [...el.querySelectorAll('.places__item')];

@@ -4,6 +4,7 @@
 .recorder__main { display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: center; gap: 8px 10px; }
 .recorder__rec { width: 46px; height: 46px; flex: none; display: grid; place-items: center; }
 .recorder__rec svg { width: 46px; height: 46px; overflow: visible; }
+.recorder__ring { transform-box: fill-box; transform-origin: center; }   /* квадрат «дышит» от центра */
 .recorder__ring { fill: none; stroke: var(--ink); stroke-width: 1.25; transform-origin: 24px 24px; }
 .recorder__core { fill: none; stroke: var(--ink); stroke-width: 1.25; transition: fill 0.2s; }
 .recorder__rec:hover .recorder__core { fill: var(--ink-faint); }

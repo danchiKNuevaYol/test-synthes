@@ -6,7 +6,5 @@
   border: 1px solid var(--ink-faint); color: var(--ink); text-align: left;
   font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); white-space: nowrap;
 }
-.places__key { width: 1ch; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .places__item:hover { border-color: var(--ink); }
 .places__item.is-on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
-.places__item.is-on .places__key { color: var(--paper); }

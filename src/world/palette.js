@@ -48,7 +48,7 @@ export function skyHatch(minutes, weather) {
 const THEME = {
   '--paper': '#eeeeee',
   '--ink': '#111111',
-  '--ink-soft': 'rgba(17, 17, 17, 0.58)',
+  '--ink-soft': 'rgba(17, 17, 17, 0.9)',
   '--ink-faint': 'rgba(17, 17, 17, 0.22)',
   '--hair': 'rgba(17, 17, 17, 0.14)',
   '--glass': 'rgba(238, 238, 238, 0.92)',

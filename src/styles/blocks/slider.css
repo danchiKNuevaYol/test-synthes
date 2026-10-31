@@ -12,7 +12,7 @@
 
 /* Область нажатия выше самой линии, чтобы в неё было легко попасть */
 .slider__track { position: relative; height: 22px; margin-top: 1px; cursor: pointer; touch-action: none; outline: none; }
-.slider__rail { position: absolute; left: 0; right: 0; top: 50%; height: var(--rail); margin-top: calc(var(--rail) / -2); background: var(--ink-faint); border-radius: 2px; }
+.slider__rail { position: absolute; left: calc(var(--thumb) / 2); right: calc(var(--thumb) / 2); top: 50%; height: var(--rail); margin-top: calc(var(--rail) / -2); background: var(--ink-faint); border-radius: 2px; }
 .slider__fill { position: absolute; top: 50%; height: var(--fill); margin-top: calc(var(--fill) / -2); background: var(--ink); border-radius: 2px;
   left: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--lo));
   width: calc((100% - var(--thumb)) * (var(--hi) - var(--lo))); }
