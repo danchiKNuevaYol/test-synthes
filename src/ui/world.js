@@ -103,6 +103,49 @@ function sketch(store, live, bridge, el) {
     let W = 0, H = 0, terrain = null, terrainKey = '';
     let clock = 0, ease = 0, lastMs = 0, rainAcc = 0, hyN = null;
     let flashAt = -1e9, bolt = null, dirty = true, lastState = null;
+    let boltFrom = null;                                        // низ главного облака — оттуда бьёт молния
+    // --- молния: главный канал из облака вниз (ломаная по методу «смещения середины»), с ветвями.
+    // Каждая линия хранит толщину в начале и в конце — канал сужается к земле, ветви тоньше и бледнее.
+    function jag(x0, y0, x1, y1, rough, iters) {
+      let pts = [[x0, y0], [x1, y1]];
+      for (let k = 0; k < iters; k++) {
+        const next = [pts[0]];
+        for (let i = 1; i < pts.length; i++) {
+          const [ax, ay] = pts[i - 1], [bx, by] = pts[i];
+          const len = Math.hypot(bx - ax, by - ay), nx = -(by - ay) / (len || 1), ny = (bx - ax) / (len || 1);
+          const d = (Math.random() - 0.5) * len * rough;
+          next.push([(ax + bx) / 2 + nx * d, (ay + by) / 2 + ny * d], pts[i]);
+        }
+        pts = next; rough *= 0.92;
+      }
+      return pts;
+    }
+    function makeBolt(hy) {
+      const o = boltFrom || { x: (0.3 + Math.random() * 0.5) * W, y: 0.1 * H };
+      const yEnd = hy - 0.05 * H, xEnd = o.x + (Math.random() - 0.5) * 0.18 * W;
+      const main = jag(o.x, o.y, xEnd, yEnd, 0.5, 6);
+      const lines = [{ pts: main, w0: 1.9, w1: 0.7, a: 1 }];
+      for (let i = 4; i < main.length * 0.75; i++) {           // ветви — из верхних трёх четвертей канала
+        if (Math.random() > 0.07) continue;
+        const [bx, by] = main[i], side = Math.random() < 0.5 ? -1 : 1, L = (0.12 + Math.random() * 0.2) * (yEnd - o.y);
+        const br = jag(bx, by, bx + side * L * (0.45 + Math.random() * 0.5), by + L, 0.55, 4);
+        lines.push({ pts: br, w0: 0.9, w1: 0.25, a: 0.7 });
+        if (Math.random() < 0.4) {                               // изредка — веточка у ветки
+          const j = Math.floor(br.length * (0.3 + Math.random() * 0.4)), [cx2, cy2] = br[j], L2 = L * 0.45;
+          lines.push({ pts: jag(cx2, cy2, cx2 + side * L2 * 0.6, cy2 + L2, 0.6, 3), w0: 0.5, w1: 0.2, a: 0.5 });
+        }
+      }
+      return lines;
+    }
+    // яркость молнии во времени: настоящая молния мерцает — вспышка, провал, повторный удар, затухание
+    function boltLife(t) {
+      if (t < 0) return 0;
+      if (t < 60) return 1;
+      if (t < 110) return 0.25;
+      if (t < 170) return 0.95;
+      return Math.max(0, 1 - (t - 170) / 300);
+    }
+
     const lv = { a: 0, b: 0, p: 0 };                          // сглаженные уровни каналов 0…1
     const parts = [];
     const ripples = [];                                       // всплески горизонта от нот: { t, x (доля ширины), h (px) }
@@ -140,13 +183,7 @@ function sketch(store, live, bridge, el) {
       } else if (id === 'boom') {
         flashAt = p.millis();
         bolt = null;
-        if (cur.weather === 'storm' || cur.weather === 'rain') {   // ломаная молния сверху до гряд
-          let x = (0.15 + Math.random() * 0.7) * W, y = -0.02 * H;
-          const pts = [[x, y]];
-          const end = hy - 0.12 * H;
-          while (y < end) { y += (0.022 + Math.random() * 0.04) * H; x += (Math.random() - 0.5) * 0.07 * H; pts.push([x, Math.min(y, end)]); }
-          bolt = pts;
-        }
+        if (cur.weather === 'storm' || cur.weather === 'rain') bolt = makeBolt(hy);   // молния из облака до гряд
       }
     }
 
@@ -243,6 +280,7 @@ function sketch(store, live, bridge, el) {
       });
       const spanX = 4.9 * R, spanY = 2.8 * R;
       const clouds = [{ cx, cy, sx: spanX, sy: spanY, al: 0.22 }];
+      boltFrom = { x: cx + (Math.sin(cx) * 0.3) * R, y: cy + 0.55 * spanY };
       let c2 = null;
       // второе облачко: меньше, выше и сбоку от главного (сторона и смещение — от place.seed), идёт за ним
       {
@@ -685,12 +723,22 @@ function sketch(store, live, bridge, el) {
 
       drawSky(S);
 
-      const fl = 1 - (p.millis() - flashAt) / 320;               // молния после вспышки тает ~300 мс
+      const fl = boltLife(p.millis() - flashAt);                 // молния мерцает и тает ~0,5 с
       if (bolt && fl > 0) {
-        g.lineJoin = 'miter'; g.lineCap = 'butt';
-        g.beginPath(); bolt.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
-        g.strokeStyle = paperHex; g.lineWidth = 9; g.stroke();
-        g.strokeStyle = ink(Math.min(1, fl * 1.6)); g.lineWidth = BOLD; g.stroke();
+        g.lineJoin = 'round'; g.lineCap = 'round';
+        for (const ln of bolt) {                                   // мягкое свечение: широкая бледная тушь под каналом
+          g.beginPath(); ln.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y)));
+          g.strokeStyle = ink(0.07 * fl * ln.a); g.lineWidth = 7 * ln.w0; g.stroke();
+        }
+        for (const ln of bolt) {                                   // сам канал: сужается от облака к земле
+          const n = ln.pts.length - 1;
+          g.strokeStyle = ink(Math.min(1, fl * ln.a));
+          for (let i = 1; i <= n; i++) {
+            const [ax, ay] = ln.pts[i - 1], [bx, by] = ln.pts[i];
+            g.beginPath(); g.moveTo(ax, ay); g.lineTo(bx, by);
+            g.lineWidth = (ln.w0 + (ln.w1 - ln.w0) * (i / n)) * (1 + 0.3 * jolt); g.stroke();
+          }
+        }
       }
 
       drawRidges(S);

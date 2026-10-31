@@ -18,9 +18,9 @@
 */
 
 :root {
-  --font-display: "Scada", "Helvetica Neue", Arial, sans-serif;           /* крупные надписи */
-  --font-ui:      "Scada", "Helvetica Neue", Arial, sans-serif;           /* подписи, кнопки, места */
-  --font-mono:    "Scada", "Helvetica Neue", Arial, sans-serif;           /* подписи капсом */
+  --font-display: "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* крупные надписи */
+  --font-ui:      "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* подписи, кнопки, места */
+  --font-mono:    "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* подписи капсом */
   --font-num:     "Ubuntu Mono", ui-monospace, Menlo, monospace;          /* только цифры: значения, таймер, темп, номера шагов */
 
   --fs-label: 10px;    /* мелкие подписи */
