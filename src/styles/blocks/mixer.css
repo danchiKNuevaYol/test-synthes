@@ -1,5 +1,5 @@
-/* .mixer — четыре полосы: A ○, B ═, Ч ⁘ и ОБЩИЙ □. В каждой сверху ручка (панорама; у общего — СОЛНЦЕ),
-   в середине индикатор уровня рядом с фейдером, внизу знак и название канала. */
+/* .mixer — четыре полосы: ФОН (голос A), МЕЛОДИЯ (B), РИТМ (частицы) и ОБЩИЙ. В каждой сверху ручка (панорама; у общего — СОЛНЦЕ),
+   в середине индикатор уровня рядом с фейдером, внизу название канала обычным текстом. */
 .mixer__strips { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
 .mixer__strip { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; padding: 0 2px; }
 .mixer__strip > .slider { align-self: stretch; }
@@ -7,5 +7,4 @@
 .mixer__body { flex: 1; min-height: 0; display: flex; align-items: stretch; justify-content: center; gap: 2px; }
 .mixer__body .fader { height: 100%; }
 .mixer__body .meter { margin: 7px 0; height: auto; }
-.mixer__name { display: inline-flex; align-items: center; gap: 4px; font: 500 10px/1.2 var(--font-mono); letter-spacing: 0.1em; white-space: nowrap; }
-.mixer__name .sign { width: 10px; height: 10px; vertical-align: 0; }
+.mixer__name { max-width: 100%; text-align: center; font: 500 9px/1.2 var(--font-mono); letter-spacing: 0.04em; white-space: nowrap; }

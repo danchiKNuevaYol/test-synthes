@@ -1,8 +1,7 @@
 // Блок .trail — ТРОПА: 16 наблюдений частиц. Четыре строки (капля, щелчок, треск, раскат) × 16 шагов,
-// справа — случайный узор, сдвиг влево/вправо, стереть. Пометки чёрной тушью: ни цвета, ни заливок.
+// под ними — сдвиг влево, стереть, сдвиг вправо. Пометки чёрной тушью: ни цвета, ни заливок.
 
 import { TRACKS } from '../state/scenes.js';
-import { sign } from './signs.js';
 import { engine } from '../audio/engine.js';
 import { degreeName } from '../state/music.js';
 
@@ -15,23 +14,6 @@ const dashTop = (deg) => PAD + ((DEGREES - 1 - deg) / (DEGREES - 1)) * (100 - 2 
 const clampDeg = (d) => Math.max(0, Math.min(DEGREES - 1, d));
 const preview = (deg) => { try { engine.playNote && engine.playNote(deg); } catch { /* звук необязателен для рисования */ } };
 
-/** Случайная мелодия: плавное движение по ступеням (чаще на 1–2), 3–6 пауз, фраза садится на тонику на 16-м шаге. */
-function randomMelody() {
-  const m = [];
-  let d = 3 + Math.floor(Math.random() * 5);
-  for (let i = 0; i < 14; i++) {
-    const r = Math.random();
-    const step = r < 0.18 ? 0 : r < 0.58 ? 1 : r < 0.86 ? 2 : 3;
-    const dir = Math.random() < (d > 7 ? 0.7 : d < 3 ? 0.3 : 0.5) ? -1 : 1;   // у краёв диапазона тянет обратно к середине
-    d = clampDeg(d + dir * step);
-    m.push(d);
-  }
-  m.push(Math.random() < 0.5 ? 1 : 2, 0);
-  const rests = 3 + Math.floor(Math.random() * 4);
-  for (let k = 0; k < rests; k++) m[1 + Math.floor(Math.random() * 13)] = null;   // шаги 1 и 15–16 всегда звучат
-  return m;
-}
-
 // Значки частиц (viewBox 16×16), всё контуром тушью: капля — штрих с точкой, щелчок — точка,
 // треск — звёздочка из 3 штрихов, раскат — зигзаг
 const GLYPHS = {
@@ -40,17 +22,15 @@ const GLYPHS = {
   crackle: '<path d="M8 2.6v10.8M3.3 5.3l9.4 5.4M12.7 5.3l-9.4 5.4"/>',
   boom: '<path d="M1.8 10 4.9 4.2 8 11.8 11.1 4.2 14.2 10"/>',
 };
-const DENSITY = [0.32, 0.3, 0.26, 0.1];
 
 const svg = (id, cls) => `<svg class="${cls}" viewBox="0 0 16 16" aria-hidden="true">${GLYPHS[id]}</svg>`;
-const randomRow = (p) => Array.from({ length: 16 }, () => Math.random() < p);
 const withSteps = (s, steps) => ({ ...s, scene: null, steps });
 
 export function mountTrail(el, store) {
   const nums = Array.from({ length: 16 }, (_, i) => `<span class="trail__num${i % 4 === 0 ? ' is-beat' : ''}">${i + 1}</span>`).join('');
   const labels = TRACKS.map((t) => `
-    <div class="trail__label">${svg(t.id, 'trail__glyph')}<span>${t.name}</span></div>`).join('');
-  const melodyLabel = `<div class="trail__label trail__label--melody">${sign('b')}<span>МЕЛОДИЯ</span></div>`;
+    <div class="trail__label">${t.name}</div>`).join('');
+  const melodyLabel = `<div class="trail__label trail__label--melody">МЕЛОДИЯ</div>`;
   const melodyCells = Array.from({ length: 16 }, (_, i) => `
         <button type="button" class="trail__mcell${i % 4 === 0 ? ' is-beat' : ''}" data-mstep="${i}" aria-label="Мелодия, шаг ${i + 1}: пауза"><i class="trail__dash"></i></button>`).join('');
   const rows = TRACKS.map((t, r) => `
@@ -61,7 +41,7 @@ export function mountTrail(el, store) {
     </div>`).join('');
 
   el.innerHTML = `
-    <h2 class="trail__title visually-hidden">${sign('p')}ТРОПА · 16 НАБЛЮДЕНИЙ</h2>
+    <h2 class="trail__title visually-hidden">ТРОПА · 16 НАБЛЮДЕНИЙ</h2>
     <div class="trail__body">
       <div class="trail__labels">
         <span class="trail__num-spacer"></span>
@@ -78,14 +58,11 @@ export function mountTrail(el, store) {
         ${rows}
       </div>
       <div class="trail__tools">
-        <button type="button" class="trail__tool" data-action="random" title="Случайный узор и новая мелодия">случайно</button>
-        <div class="trail__shift">
-          <button type="button" class="trail__tool trail__tool--icon" data-action="left" title="Сдвинуть всё влево" aria-label="Сдвинуть влево">
-            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2.2 3.7 6l3.8 3.8"/></svg></button>
-          <button type="button" class="trail__tool trail__tool--icon" data-action="right" title="Сдвинуть всё вправо" aria-label="Сдвинуть вправо">
-            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2.2 8.3 6l-3.8 3.8"/></svg></button>
-        </div>
+        <button type="button" class="trail__tool trail__tool--icon" data-action="left" title="Сдвинуть всё влево" aria-label="Сдвинуть влево">
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2.2 3.7 6l3.8 3.8"/></svg></button>
         <button type="button" class="trail__tool" data-action="clear" title="Стереть наблюдения. Shift — стереть и мелодию">стереть</button>
+        <button type="button" class="trail__tool trail__tool--icon" data-action="right" title="Сдвинуть всё вправо" aria-label="Сдвинуть вправо">
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2.2 8.3 6l-3.8 3.8"/></svg></button>
       </div>
     </div>`;
 
@@ -106,7 +83,6 @@ export function mountTrail(el, store) {
     const action = e.target.closest('[data-action]')?.dataset.action;
     const rot = (row, d) => row.map((_, i) => row[(i - d + 16) % 16]);
     const shift = (d) => (s) => ({ ...withSteps(s, s.steps.map((row) => rot(row, d))), melody: rot(s.melody || emptyMelody(), d) });
-    if (action === 'random') store.update((s) => ({ ...withSteps(s, DENSITY.map(randomRow)), melody: randomMelody() }));
     if (action === 'left') store.update(shift(-1));
     if (action === 'right') store.update(shift(1));
     if (action === 'clear') {   // Shift — заодно и мелодия

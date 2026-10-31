@@ -2,12 +2,11 @@
    Выключенная клетка — волосяная черта, включённая — значок строки; текущий шаг — пара вертикальных линеек. */
 .trail { padding-bottom: 10px; }
 
-.trail__body { flex: 1; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 0 12px; }
+.trail__body { flex: 1; min-height: 0; display: grid; --lab: 58px; grid-template-columns: var(--lab) minmax(0, 1fr) var(--lab); grid-template-rows: minmax(0, 1fr) auto; gap: 0 12px; }   /* правая колонка пуста и равна левой: сетка стоит по центру модуля */
 
 /* Подписи строк: высота строк совпадает с полем справа */
 .trail__labels { display: grid; grid-template-rows: 14px 2fr repeat(4, 1fr); }
-.trail__label { display: flex; align-items: center; gap: 7px; font: 500 10px var(--font-mono); letter-spacing: 0.06em; color: var(--ink); white-space: nowrap; }
-.trail__label .trail__glyph { width: 13px; height: 13px; flex: none; color: var(--ink); fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+.trail__label { display: flex; align-items: center; font: 500 10px var(--font-mono); letter-spacing: 0.06em; color: var(--ink); white-space: nowrap; }
 
 .trail__field { position: relative; display: grid; grid-template-rows: 14px 2fr repeat(4, 1fr); min-width: 0; }
 .trail__nums, .trail__row, .trail__melody { display: grid; grid-template-columns: repeat(16, 1fr); }
@@ -34,8 +33,7 @@
 .trail__cell:focus-visible { outline-offset: -3px; }
 
 /* Кнопки под полем: текст в рамке 1px, нажатие и наведение — инверсия */
-.trail__tools { grid-column: 1 / -1; display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding-top: 10px; }
-.trail__shift { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.trail__tools { grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: 6px; padding-top: 10px; }
 .trail__tool { height: 22px; padding: 0 10px; border: 1px solid var(--ink); border-radius: 0; background: transparent; color: var(--ink);
   font: 500 10px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
 .trail__tool:hover, .trail__tool:active { background: var(--ink); color: var(--paper); }
@@ -45,7 +43,6 @@
 /* Мелодия: 16 столбиков, нота — короткая горизонтальная черта на высоте ступени (0 внизу, 11 вверху);
    вместе черты читаются как линия мелодии, волосяная ломаная соединяет соседние ноты, пауза — бледная метка внизу */
 .trail__label--melody { font-weight: 500; }
-.trail__label--melody .sign { width: 13px; height: 13px; }
 .trail__melody { position: relative; cursor: crosshair; touch-action: none; user-select: none; border-bottom: 1px solid var(--hair); }
 .trail__line { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .trail__line path { fill: none; stroke: var(--ink); stroke-width: 1; opacity: 0.4; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
