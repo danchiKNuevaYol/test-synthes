@@ -24,11 +24,12 @@ export function mountHud(el) {
   function update(state, live = {}) {
     const p = state.place || {};
     const key = state.key || DEFAULT_KEY;
-    const k = `${p.name}|${p.time}|${p.weather}|${key.root}|${key.scale}`;
+    const k = `${p.query}|${p.name}|${p.time}|${p.weather}|${key.root}|${key.scale}`;
     if (k !== shown) {
       shown = k;
       place.textContent = p.name || '';
-      info.textContent = `${p.time || ''} · ${WEATHER[p.weather] || String(p.weather || '').toUpperCase()} · ${keyLabel(key)}`;
+      info.textContent = p.query === '' ? keyLabel(key) : `${p.time || ''} · ${WEATHER[p.weather] || String(p.weather || '').toUpperCase()} · ${keyLabel(key)}`;
+      hint.textContent = p.query === '' ? 'ВЫБЕРИТЕ МЕСТО — КЛАВИШИ 1–5 · ПРОБЕЛ — ИГРАТЬ' : 'ПРОБЕЛ — НАСТРОИТЬСЯ НА МЕСТО';
     }
     const s = live.playing && live.step >= 0 ? ` · ШАГ ${two(live.step + 1)}/16` : '';
     if (s !== step) { step = s; stepEl.textContent = s; }

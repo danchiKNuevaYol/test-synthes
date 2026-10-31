@@ -3,6 +3,7 @@
 
 import { createStore } from './state/store.js';
 import { PRESETS, placeToState, normalizeQuery } from './state/place.js';
+import { blankState } from './state/blank.js';
 import { engine } from './audio/engine.js';
 import { uiTheme } from './world/palette.js';
 import { mountWorld } from './ui/world.js';
@@ -20,9 +21,9 @@ import { degreeName } from './state/music.js';
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
 
-// Место берётся из адреса (?place=Озеро Тишины, 4:12) — так прибором делятся ссылкой
-const startQuery = normalizeQuery(new URLSearchParams(location.search).get('place') || '') || PRESETS[0].query;
-const store = createStore(placeToState(startQuery));
+// Место берётся из адреса (?place=Озеро Тишины, 4:12) — так прибором делятся ссылкой. Без адреса прибор открывается пустым
+const startQuery = normalizeQuery(new URLSearchParams(location.search).get('place') || '');
+const store = createStore(startQuery ? placeToState(startQuery) : blankState());
 const live = { state: store.get(), step: -1, playing: false, recording: false };   // для пейзажа (p5) и заголовка
 
 // --- блоки. Всё, что в index.html размечено атрибутами data-*, подключается по классу

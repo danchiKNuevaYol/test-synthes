@@ -1,6 +1,7 @@
-// Блок .recorder — запись экспедиции: кнопка REC, таймер, места-пресеты (.places, рисует ui/places.js), старт/стоп/скачать, темп. (ОБЩИЙ и СОЛНЦЕ — в микшере.)
+// Блок .recorder — запись: сверху REC и таймер, под ними старт/стоп/скачать, внизу сетка 2×3 равных клеток: пять мест (.places, рисует ui/places.js) и темп в шестой.
+// Состояние записи словами — только для экранных чтецов (.visually-hidden), на экране его нет.
 // mountRecorder(el, store, actions) → { update(ui), tick(seconds) }; actions = { play, stop, toggleRec, save }.
-// Все значки — инлайн SVG-контуры (символы вроде «⭳» в системных шрифтах нет). REC — окружность; запись — залитый круг.
+// Все значки — инлайн SVG-контуры (символы вроде «⭳» в системных шрифтах нет). REC — квадрат в квадрате; при записи внутренний залит.
 
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 const BPM = { min: 40, max: 200, step: 2 };
@@ -20,23 +21,20 @@ export function mountRecorder(el, store, actions) {
       <button type="button" class="recorder__rec" aria-pressed="false" aria-label="Запись (R)" title="Запись — R">
         <svg viewBox="0 0 48 48" aria-hidden="true"><rect class="recorder__ring" x="2" y="2" width="44" height="44"/><rect class="recorder__core" x="12" y="12" width="24" height="24"/></svg>
       </button>
-      <div class="recorder__readout">
-        <output class="recorder__time" aria-live="off">00:00</output>
-        <span class="recorder__status" aria-live="polite">ГОТОВ К ЗАПИСИ</span>
-      </div>
+      <output class="recorder__time" aria-live="off">00:00</output>
     </div>
-    <nav class="places" aria-label="Места — клавиши 1–5"></nav>
-    <div class="recorder__row">
-      <div class="recorder__transport">
-        <button type="button" class="recorder__btn" data-action="play" aria-label="Старт" title="Старт — пробел">${ICONS.play}</button>
-        <button type="button" class="recorder__btn" data-action="stop" aria-label="Стоп" title="Стоп — пробел">${ICONS.stop}</button>
-        <button type="button" class="recorder__btn" data-action="save" aria-label="Скачать запись (WAV)" title="Скачать запись (WAV)">${ICONS.save}</button>
-      </div>
+    <p class="recorder__status visually-hidden" role="status" aria-live="polite">ГОТОВ К ЗАПИСИ</p>
+    <div class="recorder__transport">
+      <button type="button" class="recorder__btn" data-action="play" aria-label="Старт" title="Старт — пробел">${ICONS.play}</button>
+      <button type="button" class="recorder__btn" data-action="stop" aria-label="Стоп" title="Стоп — пробел">${ICONS.stop}</button>
+      <button type="button" class="recorder__btn" data-action="save" aria-label="Скачать запись (WAV)" title="Скачать запись (WAV)">${ICONS.save}</button>
+    </div>
+    <div class="recorder__deck">
+      <nav class="places" aria-label="Места — клавиши 1–5"></nav>
       <div class="recorder__tempo" role="group" aria-label="Темп">
-        <span class="recorder__label">ТЕМП</span>
-        <button type="button" class="recorder__step" data-bpm="-1" aria-label="Темп медленнее">−</button>
-        <output class="recorder__bpm">78</output>
-        <button type="button" class="recorder__step" data-bpm="1" aria-label="Темп быстрее">+</button>
+        <button type="button" class="recorder__step" data-bpm="-1" aria-label="Темп медленнее" title="Медленнее">−</button>
+        <output class="recorder__bpm" aria-label="Темп, ударов в минуту">90</output>
+        <button type="button" class="recorder__step" data-bpm="1" aria-label="Темп быстрее" title="Быстрее">+</button>
       </div>
     </div>`;
 

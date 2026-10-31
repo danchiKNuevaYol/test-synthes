@@ -1,7 +1,8 @@
-/* .recorder — запись экспедиции. REC — окружность-контур; во время записи — залитый круг и медленно пульсирующий внешний контур */
-.recorder { justify-content: space-between; }
+/* .recorder — запись. Сверху REC и таймер, под ними транспорт, внизу сетка 2×3: пять мест и темп. REC — квадрат в квадрате;
+   при записи внутренний залит, внешний медленно «дышит» */
+.recorder { gap: 8px; }
 
-.recorder__main { display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: center; gap: 8px 10px; }
+.recorder__main { display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: center; gap: 10px; }
 .recorder__rec { width: 46px; height: 46px; flex: none; display: grid; place-items: center; }
 .recorder__rec svg { width: 46px; height: 46px; overflow: visible; }
 .recorder__ring { transform-box: fill-box; transform-origin: center; }   /* квадрат «дышит» от центра */
@@ -12,23 +13,23 @@
 .recorder__rec.is-on .recorder__ring { animation: rec-ring 2.8s ease-in-out infinite; }
 @keyframes rec-ring { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: 0.3; } }
 
-/* время и статус: статус занимает всю ширину под кнопкой, чтобы не переноситься */
-.recorder__readout { display: contents; }
+/* время: справа от кнопки; состояние записи на экране не пишется (.recorder__status — только для чтецов) */
 .recorder__time { font: 500 26px/1 var(--font-num); letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
-.recorder__status { grid-column: 1 / -1; font: 500 9px var(--font-mono); letter-spacing: 0.1em; color: var(--ink-soft); white-space: nowrap; }
-.recorder__rec.is-on ~ .recorder__readout .recorder__status { color: var(--ink); }
 
-.recorder__row { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
-.recorder__transport { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
-.recorder__btn { height: 28px; display: grid; place-items: center; border: 1px solid var(--ink); color: var(--ink); }
+.recorder__transport { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; height: 30px; }
+.recorder__btn { display: grid; place-items: center; border: 1px solid var(--ink); color: var(--ink); }
 .recorder__btn svg { width: 14px; height: 14px; }
 .recorder__btn:hover:not(:disabled), .recorder__btn.is-on { background: var(--ink); color: var(--paper); }
 .recorder__btn:disabled { border-color: var(--ink-faint); }
 
-.recorder__tempo { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-.recorder__label { font: 500 9px var(--font-mono); letter-spacing: 0.1em; color: var(--ink-soft); margin-right: 2px; }
-.recorder__step { width: 22px; height: 22px; border: 1px solid var(--ink); font: 500 14px/1 var(--font-num); color: var(--ink); display: grid; place-items: center; }
+/* сетка 2×3 равных клеток занимает всё оставшееся место: .places растворяется в ней, темп — шестая клетка той же рамки */
+.recorder__deck { flex: 1 1 0; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.recorder__deck .places { display: contents; }
+.recorder__tempo { min-width: 0; box-sizing: border-box; display: grid; grid-template-columns: 26px minmax(0, 1fr) 26px; align-items: stretch;
+  border: 1px solid var(--ink-faint); color: var(--ink); }
+.recorder__tempo:hover, .recorder__tempo:focus-within { border-color: var(--ink); }
+.recorder__step { display: grid; place-items: center; font: 500 14px/1 var(--font-num); color: var(--ink); }
 .recorder__step:hover { background: var(--ink); color: var(--paper); }
-.recorder__bpm { min-width: 2.4ch; text-align: center; font: 500 13px var(--font-num); font-variant-numeric: tabular-nums; }
+.recorder__bpm { display: grid; place-items: center; font: 500 12px var(--font-num); font-variant-numeric: tabular-nums; }
 
 @media (prefers-reduced-motion: reduce) { .recorder__rec.is-on .recorder__ring { animation: none; } }
