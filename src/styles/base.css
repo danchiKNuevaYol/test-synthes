@@ -19,12 +19,6 @@ input { font: inherit; color: inherit; border-radius: 0; }
   white-space: nowrap !important; border: 0 !important;
 }
 
-/* Строка места — бумага ~0.92, рамка 1px тушью, прямые углы, ни блюра, ни тени */
-.place-bar {
-  background: var(--panel); border: 1px solid var(--ink); border-radius: 0;
-  box-shadow: none; color: var(--ink);
-}
-
 /* Заголовок модуля прибора: заглавные моно и волосяная линейка до края */
 .instrument__title, .trail__title, .recorder__title {
   display: flex; align-items: center; gap: 7px; margin: 0; white-space: nowrap;

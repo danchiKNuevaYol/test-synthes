@@ -1,12 +1,12 @@
-/* .place-bar — строка места справа сверху: поле с подчёркиванием, текстовые кнопки, места-пресеты (активное — инверсия).
-   Одна компактная строка (~36px), чтобы не занимать небо: поле · «НАСТРОИТЬ» · места · «ССЫЛКА». */
+/* .place-bar — строка места: тонкий ряд сверху прибора, над модулями, во всю ширину.
+   Рамка 1px тушью, как у модулей; поле слева, «НАСТРОИТЬ ↵» рядом, места-пресеты справа (активное — инверсия). */
 .place-bar {
-  position: absolute; top: 12px; right: 2.5%; z-index: 6; width: 53%; max-width: 640px; margin: 0;
-  display: flex; flex-wrap: nowrap; align-items: center; justify-content: flex-end; gap: 6px 12px;
-  padding: 5px 12px 6px;
+  flex: 0 0 32px; height: 32px; margin: 0; box-sizing: border-box; min-width: 0;
+  display: flex; align-items: center; gap: 14px; padding: 0 10px 0 12px;
+  background: var(--paper); border: 1px solid var(--ink); border-radius: 0; box-shadow: none; color: var(--ink);
 }
 .place-bar__input {
-  order: 1; flex: 1 1 110px; min-width: 0; height: 24px; padding: 0 2px; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0;
+  flex: 1 1 auto; min-width: 0; height: 22px; padding: 0 2px; border: 0; border-bottom: 1px solid var(--ink); border-radius: 0;
   background: transparent; color: var(--ink); caret-color: var(--ink); outline: none;
   font: 500 12px var(--font-mono); letter-spacing: 0.02em; text-overflow: ellipsis;
 }
@@ -14,21 +14,19 @@
 .place-bar__input:focus { border-bottom-width: 2px; padding-bottom: 0; }
 .place-bar__input:focus-visible { outline: none; }
 
-.place-bar__go, .place-bar__link {
-  height: 24px; padding: 0 2px; white-space: nowrap;
+.place-bar__go {
+  flex: none; height: 24px; padding: 0 2px; white-space: nowrap;
   font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); color: var(--ink);
   border-bottom: 1px solid transparent;
 }
-.place-bar__go:hover, .place-bar__link:hover { border-bottom-color: var(--ink); }
-.place-bar__link.is-done { background: var(--ink); color: var(--paper); }
+.place-bar__go:hover { border-bottom-color: var(--ink); }
 
-/* одна строка: поле · НАСТРОИТЬ · места · ССЫЛКА; разделители не нужны */
-.place-bar__go { order: 2; }
-.place-bar__link { order: 4; }
-.place-bar__sep { display: none; }
+/* вертикальная волосяная линейка между полем и местами */
+.place-bar__sep { flex: none; width: 1px; height: 18px; background: var(--ink-faint); }
 
+.place-bar__chips { flex: none; display: flex; align-items: center; gap: 6px; }
 .place-bar__chip {
-  order: 3; height: 22px; padding: 0 5px; white-space: nowrap;
+  height: 22px; padding: 0 7px; white-space: nowrap;
   font: 500 10px var(--font-mono); letter-spacing: var(--ls-caps); color: var(--ink);
   border: 1px solid transparent;
 }
